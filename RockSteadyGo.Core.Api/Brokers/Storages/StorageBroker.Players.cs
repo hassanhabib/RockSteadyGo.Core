@@ -44,5 +44,18 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
 
             return await broker.Players.FindAsync(playerId);
         }
+
+        public async ValueTask<Player> UpdatePlayerAsync(Player player)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            EntityEntry<Player> playerEntityEntry =
+                broker.Players.Update(player);
+
+            await broker.SaveChangesAsync();
+
+            return playerEntityEntry.Entity;
+        }
     }
 }
