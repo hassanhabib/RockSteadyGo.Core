@@ -124,7 +124,7 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
-            Player randomPlayer = CreateRandomModifyPlayer(randomDateTimeOffset);
+            Player randomPlayer = CreateRandomPlayer(randomDateTimeOffset);
             Player nonExistPlayer = randomPlayer;
             Player nullPlayer = null;
 
@@ -160,7 +160,7 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+                    Times.Never);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(

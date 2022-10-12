@@ -61,6 +61,8 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
                 Player maybePlayer =
                     await this.storageBroker.SelectPlayerByIdAsync(player.Id);
 
+                ValidateStoragePlayer(maybePlayer, player.Id);
+
                 return await this.storageBroker.UpdatePlayerAsync(player);
             });
     }
