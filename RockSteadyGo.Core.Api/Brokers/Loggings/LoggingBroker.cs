@@ -12,5 +12,8 @@ namespace RockSteadyGo.Core.Api.Brokers.Loggings
 
         public void LogInformation(string message) =>
             this.logger.LogInformation(message);
+
+        public void LogTrace(string message) =>
+            this.logger.LogTrace(message);
     }
 }
