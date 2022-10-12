@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq.Expressions;
 using Moq;
 using RockSteadyGo.Core.Api.Brokers.DateTimes;
 using RockSteadyGo.Core.Api.Brokers.Loggings;
@@ -11,6 +12,7 @@ using RockSteadyGo.Core.Api.Brokers.Storages;
 using RockSteadyGo.Core.Api.Models.Players;
 using RockSteadyGo.Core.Api.Services.Foundations.Players;
 using Tynamix.ObjectFiller;
+using Xeptions;
 
 namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
 {
@@ -32,6 +34,9 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
                 dateTimeBroker: this.dateTimeBrokerMock.Object,
                 loggingBroker: this.loggingBrokerMock.Object);
         }
+
+        private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
+            actualException => actualException.SameExceptionAs(expectedException);
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
