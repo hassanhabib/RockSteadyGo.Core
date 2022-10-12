@@ -53,5 +53,69 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Theory]
+        [InlineData(null)]
+        [InlineData("")]
+        [InlineData(" ")]
+        public async Task ShouldThrowValidationExceptionOnModifyIfPlayerIsInvalidAndLogItAsync(string invalidText)
+        {
+            // given 
+            var invalidPlayer = new Player
+            {
+                Name = invalidText,
+                Username = invalidText,
+            };
+
+            var invalidPlayerException = new InvalidPlayerException();
+
+            invalidPlayerException.AddData(
+                key: nameof(Player.Id),
+                values: "Id is required");
+
+            invalidPlayerException.AddData(
+                key: nameof(Player.Name),
+                values: "Text is required");
+
+            invalidPlayerException.AddData(
+                key: nameof(Player.Username),
+                values: "Text is required");
+
+            invalidPlayerException.AddData(
+                key: nameof(Player.CreatedDate),
+                values: "Date is required");
+
+            var expectedPlayerValidationException =
+                new PlayerValidationException(invalidPlayerException);
+
+            // when
+            ValueTask<Player> modifyPlayerTask =
+                this.playerService.ModifyPlayerAsync(invalidPlayer);
+
+            PlayerValidationException actualPlayerValidationException =
+                await Assert.ThrowsAsync<PlayerValidationException>(
+                    modifyPlayerTask.AsTask);
+
+            //then
+            actualPlayerValidationException.Should()
+                .BeEquivalentTo(expectedPlayerValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPlayerValidationException))),
+                        Times.Once());
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdatePlayerAsync(It.IsAny<Player>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
