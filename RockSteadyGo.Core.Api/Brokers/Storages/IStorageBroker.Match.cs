@@ -15,5 +15,6 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
         ValueTask<Match> InsertMatchAsync(Match match);
         IQueryable<Match> SelectAllMatches();
         ValueTask<Match> SelectMatchByIdAsync(Guid matchId);
+        ValueTask<Match> UpdateMatchAsync(Match match);
     }
 }
