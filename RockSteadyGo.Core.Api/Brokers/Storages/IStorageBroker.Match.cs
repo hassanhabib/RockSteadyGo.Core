@@ -3,8 +3,13 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
+using RockSteadyGo.Core.Api.Models.Matches;
+
 namespace RockSteadyGo.Core.Api.Brokers.Storages
 {
     public partial interface IStorageBroker
-    { }
+    {
+        ValueTask<Match> InsertMatchAsync(Match match);
+    }
 }
