@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Linq;
 using System.Threading.Tasks;
 using RockSteadyGo.Core.Api.Brokers.DateTimes;
 using RockSteadyGo.Core.Api.Brokers.Loggings;
@@ -34,5 +35,8 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
 
                 return await this.storageBroker.InsertPlayerAsync(player);
             });
+
+        public IQueryable<Player> RetrieveAllPlayers() =>
+            TryCatch(() => this.storageBroker.SelectAllPlayers());
     }
 }
