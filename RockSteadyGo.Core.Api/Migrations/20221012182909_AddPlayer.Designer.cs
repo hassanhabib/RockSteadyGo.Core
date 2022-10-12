@@ -12,8 +12,8 @@ using RockSteadyGo.Core.Api.Brokers.Storages;
 namespace RockSteadyGo.Core.Api.Migrations
 {
     [DbContext(typeof(StorageBroker))]
-    [Migration("20221012175338_Player")]
-    partial class Player
+    [Migration("20221012182909_AddPlayer")]
+    partial class AddPlayer
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -42,6 +42,22 @@ namespace RockSteadyGo.Core.Api.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Players");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("ca66ac15-7b4f-4a4a-a51d-337983545900"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2020, 10, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 1, 0, 0, 0)),
+                            Name = "Hassan Habib",
+                            Username = "hhabib"
+                        },
+                        new
+                        {
+                            Id = new Guid("edaf90dc-1e0f-4d6c-9871-93148f081b1c"),
+                            CreatedDate = new DateTimeOffset(new DateTime(2020, 10, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 1, 0, 0, 0)),
+                            Name = "Etienne Cowley",
+                            Username = "ecowley"
+                        });
                 });
 #pragma warning restore 612, 618
         }
