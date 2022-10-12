@@ -44,7 +44,7 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
 
             this.storageBrokerMock.Setup(broker =>
                 broker.UpdatePlayerAsync(inputPlayer))
-                    .ReturnsAsync(updatedPlayer);
+                    .ReturnsAsync(modifiedPlayer);
 
             // when
             Player actualPlayer =
@@ -55,7 +55,7 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
+                    Times.Never);
 
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPlayerByIdAsync(inputPlayer.Id),

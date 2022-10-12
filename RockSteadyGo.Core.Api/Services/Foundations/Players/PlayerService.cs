@@ -53,7 +53,12 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
                 return maybePlayer;
             });
 
-        public ValueTask<Player> ModifyPlayerAsync(Player player) =>
-            throw new NotImplementedException();
+        public async ValueTask<Player> ModifyPlayerAsync(Player player)
+        {
+            Player maybePlayer =
+                    await this.storageBroker.SelectPlayerByIdAsync(player.Id);
+
+            return await this.storageBroker.UpdatePlayerAsync(player);
+        }
     }
 }
