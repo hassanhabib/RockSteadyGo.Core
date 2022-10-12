@@ -37,6 +37,6 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
             });
 
         public IQueryable<Player> RetrieveAllPlayers() =>
-            this.storageBroker.SelectAllPlayers();
+            TryCatch(() => this.storageBroker.SelectAllPlayers());
     }
 }
