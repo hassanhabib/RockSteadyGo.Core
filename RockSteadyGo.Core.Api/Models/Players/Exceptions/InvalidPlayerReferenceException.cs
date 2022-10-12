@@ -8,10 +8,9 @@ using Xeptions;
 
 namespace RockSteadyGo.Core.Api.Models.Players.Exceptions
 {
-    public class AlreadyExistsPlayerException : Xeption
+    public class InvalidPlayerReferenceException : Xeption
     {
-        public AlreadyExistsPlayerException(Exception innerException)
-            : base(message: "Player with the same Id already exists.", innerException)
-        { }
+        public InvalidPlayerReferenceException(Exception innerException)
+            : base(message: "Invalid player reference error occurred.", innerException) { }
     }
 }
