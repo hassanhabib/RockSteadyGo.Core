@@ -3,7 +3,10 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
+using RockSteadyGo.Core.Api.Models.Matches;
 using RockSteadyGo.Core.Api.Models.Players;
 
 namespace RockSteadyGo.Core.Api.Brokers.Storages
@@ -11,5 +14,18 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
     public partial class StorageBroker
     {
         public DbSet<Player> Matches { get; set; }
+
+        public async ValueTask<Match> InsertMatchAsync(Match match)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            EntityEntry<Match> matchEntityEntry =
+                await broker.Matches.AddAsync(match);
+
+            await broker.SaveChangesAsync();
+
+            return matchEntityEntry.Entity;
+        }
     }
 }
