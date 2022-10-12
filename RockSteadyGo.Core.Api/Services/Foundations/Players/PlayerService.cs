@@ -40,7 +40,7 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
         public IQueryable<Player> RetrieveAllPlayers() =>
             TryCatch(() => this.storageBroker.SelectAllPlayers());
 
-        public ValueTask<Player> RetrievePlayerByIdAsync(Guid playerId) =>
-            throw new NotImplementedException();
+        public async ValueTask<Player> RetrievePlayerByIdAsync(Guid playerId) =>
+            await this.storageBroker.SelectPlayerByIdAsync(playerId);
     }
 }
