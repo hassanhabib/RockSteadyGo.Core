@@ -28,8 +28,8 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
             var expectedPlayerDependencyException =
                 new PlayerDependencyException(failedPlayerStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPlayerByIdAsync(randomPlayer.Id))
                     .Throws(sqlException);
 
             // when
@@ -44,13 +44,9 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
             actualPlayerDependencyException.Should()
                 .BeEquivalentTo(expectedPlayerDependencyException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
-
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectPlayerByIdAsync(randomPlayer.Id),
-                    Times.Never);
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
@@ -59,6 +55,10 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdatePlayerAsync(randomPlayer),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
