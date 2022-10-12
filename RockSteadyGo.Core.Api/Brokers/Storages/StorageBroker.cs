@@ -21,6 +21,7 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            base.OnModelCreating(modelBuilder);
             AddConfigurations(modelBuilder);
             AddSeedData(modelBuilder);
         }
