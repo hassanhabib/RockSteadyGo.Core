@@ -92,12 +92,11 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
                     addPlayerTask.AsTask());
 
             // then
-            actualPlayerValidationException.Should()
-                .BeEquivalentTo(expectedPlayerValidationException);
+            actualPlayerValidationException.Should().BeEquivalentTo(expectedPlayerValidationException);
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Once());
+                    Times.Never());
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
