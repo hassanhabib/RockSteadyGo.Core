@@ -44,5 +44,18 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
 
             return await broker.Matches.FindAsync(matchId);
         }
+
+        public async ValueTask<Match> UpdateMatchAsync(Match match)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            EntityEntry<Match> matchEntityEntry =
+                broker.Matches.Update(match);
+
+            await broker.SaveChangesAsync();
+
+            return matchEntityEntry.Entity;
+        }
     }
 }
