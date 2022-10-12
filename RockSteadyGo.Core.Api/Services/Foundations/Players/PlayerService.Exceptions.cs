@@ -44,6 +44,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsPlayerException);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidPlayerReferenceException =
+                    new InvalidPlayerReferenceException(foreignKeyConstraintConflictException);
+
+                throw CreateAndLogDependencyValidationException(invalidPlayerReferenceException);
+            }
         }
 
         private PlayerValidationException CreateAndLogValidationException(Xeption exception)
