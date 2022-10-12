@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using RockSteadyGo.Core.Api.Models.Matches;
@@ -13,5 +14,6 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
     {
         ValueTask<Match> InsertMatchAsync(Match match);
         IQueryable<Match> SelectAllMatches();
+        ValueTask<Match> SelectMatchByIdAsync(Guid matchId);
     }
 }
