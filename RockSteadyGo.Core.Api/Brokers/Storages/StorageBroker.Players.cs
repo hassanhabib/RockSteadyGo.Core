@@ -31,5 +31,13 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
 
             return broker.Players;
         }
+
+        public async ValueTask<Player> SelectPlayerByIdAsync(Guid playerId)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            return await broker.Players.FindAsync(playerId);
+        }
     }
 }
