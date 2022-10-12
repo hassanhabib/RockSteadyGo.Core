@@ -24,5 +24,8 @@ namespace RockSteadyGo.Core.Api.Brokers.Loggings
 
         public void LogError(Exception exception) =>
             this.logger.LogError(exception.Message, exception);
+
+        public void LogCritical(Exception exception) =>
+            this.logger.LogCritical(exception, exception.Message);
     }
 }
