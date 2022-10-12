@@ -5,10 +5,13 @@
 
 using System;
 
-namespace RockSteadyGo.Core.Api.Brokers.DateTimes
+namespace RockSteadyGo.Core.Api.Models.Players
 {
-    public interface IDateTimeBroker
+    public class Player
     {
-        DateTimeOffset GetCurrentDateTimeOffset();
+        public Guid Id { get; set; }
+        public string Name { get; set; }
+        public string Username { get; set; }
+        public DateTimeOffset CreatedDate { get; set; }
     }
 }

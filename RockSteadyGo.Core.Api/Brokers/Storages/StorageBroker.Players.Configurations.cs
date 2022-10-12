@@ -3,12 +3,13 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
+using Microsoft.EntityFrameworkCore;
 
-namespace RockSteadyGo.Core.Api.Brokers.DateTimes
+namespace RockSteadyGo.Core.Api.Brokers.Storages
 {
-    public interface IDateTimeBroker
+    public partial class StorageBroker
     {
-        DateTimeOffset GetCurrentDateTimeOffset();
+        private static void AddPlayerConfigurations(ModelBuilder modelBuilder)
+        { }
     }
 }

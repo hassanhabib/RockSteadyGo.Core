@@ -3,12 +3,8 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
-
-namespace RockSteadyGo.Core.Api.Brokers.DateTimes
+namespace RockSteadyGo.Core.Api.Brokers.Storages
 {
-    public interface IDateTimeBroker
-    {
-        DateTimeOffset GetCurrentDateTimeOffset();
-    }
+    public partial interface IStorageBroker
+    { }
 }
