@@ -21,7 +21,18 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
+            AddConfigurations(modelBuilder);
+            AddSeedData(modelBuilder);
+        }
+
+        private static void AddConfigurations(ModelBuilder modelBuilder)
+        {
+            AddPlayerConfigurations(modelBuilder);
+        }
+
+        private void AddSeedData(ModelBuilder modelBuilder)
+        {
+            AddPlayersSeedData(modelBuilder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

@@ -11,7 +11,6 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
     public partial class StorageBroker
     {
         private static void AddPlayersSeedData(ModelBuilder modelBuilder)
-        {
-        }
+        { }
     }
 }
