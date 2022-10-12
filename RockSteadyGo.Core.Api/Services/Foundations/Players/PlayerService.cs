@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using RockSteadyGo.Core.Api.Brokers.DateTimes;
@@ -38,5 +39,18 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
 
         public IQueryable<Player> RetrieveAllPlayers() =>
             TryCatch(() => this.storageBroker.SelectAllPlayers());
+
+        public ValueTask<Player> RetrievePlayerByIdAsync(Guid playerId) =>
+            TryCatch(async () =>
+            {
+                ValidatePlayerId(playerId);
+
+                Player maybePlayer = await this.storageBroker
+                    .SelectPlayerByIdAsync(playerId);
+
+                ValidateStoragePlayer(maybePlayer, playerId);
+
+                return maybePlayer;
+            });
     }
 }
