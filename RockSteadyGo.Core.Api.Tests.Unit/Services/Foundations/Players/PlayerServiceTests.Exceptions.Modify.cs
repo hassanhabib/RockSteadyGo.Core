@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using RockSteadyGo.Core.Api.Models.Players;
 using RockSteadyGo.Core.Api.Models.Players.Exceptions;
@@ -110,6 +111,57 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdatePlayerAsync(somePlayer),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
+        {
+            // given
+            Player randomPlayer = CreateRandomPlayer();
+            var databaseUpdateException = new DbUpdateException();
+
+            var failedPlayerStorageException =
+                new FailedPlayerStorageException(databaseUpdateException);
+
+            var expectedPlayerDependencyException =
+                new PlayerDependencyException(failedPlayerStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPlayerByIdAsync(randomPlayer.Id))
+                    .Throws(databaseUpdateException);
+
+            // when
+            ValueTask<Player> modifyPlayerTask =
+                this.playerService.ModifyPlayerAsync(randomPlayer);
+
+            PlayerDependencyException actualPlayerDependencyException =
+                await Assert.ThrowsAsync<PlayerDependencyException>(
+                    modifyPlayerTask.AsTask);
+
+            // then
+            actualPlayerDependencyException.Should()
+                .BeEquivalentTo(expectedPlayerDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPlayerByIdAsync(randomPlayer.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedPlayerDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdatePlayerAsync(randomPlayer),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
