@@ -1,0 +1,49 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33006.217
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RockSteadyGo.Core.Api", "RockSteadyGo.Core.Api\RockSteadyGo.Core.Api.csproj", "{78C5701D-BFC5-4E3D-9883-9BA0BCFBB2CF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RockSteadyGo.Core.Api.Infrastructure.Build", "RockSteadyGo.Core.Api.Infrastructure.Build\RockSteadyGo.Core.Api.Infrastructure.Build.csproj", "{159B344E-3238-4057-B964-6C9429C19D4D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RockSteadyGo.Core.Api.Infrastructure.Provision", "RockSteadyGo.Core.Api.Infrastructure.Provision\RockSteadyGo.Core.Api.Infrastructure.Provision.csproj", "{72FDE8A2-CD94-46B8-BD94-C1AB5CC5FE7E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RockSteadyGo.Core.Api.Tests.Acceptance", "RockSteadyGo.Core.Api.Tests.Acceptance\RockSteadyGo.Core.Api.Tests.Acceptance.csproj", "{4F337F94-9F1F-4D1F-AE26-62854C0E671F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RockSteadyGo.Core.Api.Tests.Unit", "RockSteadyGo.Core.Api.Tests.Unit\RockSteadyGo.Core.Api.Tests.Unit.csproj", "{568FCE06-8977-4AF3-B8C5-7F8B5B6B6FD9}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{78C5701D-BFC5-4E3D-9883-9BA0BCFBB2CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{78C5701D-BFC5-4E3D-9883-9BA0BCFBB2CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{78C5701D-BFC5-4E3D-9883-9BA0BCFBB2CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{78C5701D-BFC5-4E3D-9883-9BA0BCFBB2CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{159B344E-3238-4057-B964-6C9429C19D4D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{159B344E-3238-4057-B964-6C9429C19D4D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{159B344E-3238-4057-B964-6C9429C19D4D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{159B344E-3238-4057-B964-6C9429C19D4D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{72FDE8A2-CD94-46B8-BD94-C1AB5CC5FE7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{72FDE8A2-CD94-46B8-BD94-C1AB5CC5FE7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{72FDE8A2-CD94-46B8-BD94-C1AB5CC5FE7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{72FDE8A2-CD94-46B8-BD94-C1AB5CC5FE7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4F337F94-9F1F-4D1F-AE26-62854C0E671F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4F337F94-9F1F-4D1F-AE26-62854C0E671F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4F337F94-9F1F-4D1F-AE26-62854C0E671F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4F337F94-9F1F-4D1F-AE26-62854C0E671F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{568FCE06-8977-4AF3-B8C5-7F8B5B6B6FD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{568FCE06-8977-4AF3-B8C5-7F8B5B6B6FD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{568FCE06-8977-4AF3-B8C5-7F8B5B6B6FD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{568FCE06-8977-4AF3-B8C5-7F8B5B6B6FD9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A0185A90-6315-4A28-9057-6168520EF5D2}
+	EndGlobalSection
+EndGlobal
