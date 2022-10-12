@@ -27,7 +27,12 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Player> AddPlayerAsync(Player player) =>
-            await this.storageBroker.InsertPlayerAsync(player);
+        public ValueTask<Player> AddPlayerAsync(Player player) =>
+            TryCatch(async () =>
+            {
+                ValidatePlayerOnAdd(player);
+
+                return await this.storageBroker.InsertPlayerAsync(player);
+            });
     }
 }
