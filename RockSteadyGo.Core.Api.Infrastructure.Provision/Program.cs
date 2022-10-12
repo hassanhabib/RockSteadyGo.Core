@@ -1,7 +1,6 @@
 ﻿// ---------------------------------------------------------------
-// Copyright (c) Christo du Toit. All rights reserved.
-// Licensed under the MIT License.
-// See License.txt in the project root for license information.
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
 namespace RockSteadyGo.Core.Api.Infrastructure.Provision
