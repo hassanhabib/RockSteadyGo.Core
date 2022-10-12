@@ -45,6 +45,16 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
             }
         }
 
+        private static void ValidateAgainstStoragePlayerOnModify(Player inputPlayer, Player storagePlayer)
+        {
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputPlayer.CreatedDate,
+                    secondDate: storagePlayer.CreatedDate,
+                    secondDateName: nameof(Player.CreatedDate)),
+                Parameter: nameof(Player.CreatedDate)));
+        }
+
         private static void ValidatePlayerIsNotNull(Player player)
         {
             if (player is null)
@@ -84,6 +94,15 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
 
             return timeDifference.TotalSeconds is > 60 or < 0;
         }
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
