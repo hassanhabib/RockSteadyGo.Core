@@ -7,17 +7,17 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using RockSteadyGo.Core.Api.Models.Players;
+using RockSteadyGo.Core.Api.Models.Matches;
 
 namespace RockSteadyGo.Core.Api.Brokers.Storages
 {
     public partial class StorageBroker
     {
-        private static void AddPlayersSeedData(ModelBuilder modelBuilder)
+        private static void AddMatchesSeedData(ModelBuilder modelBuilder)
         {
-            string jsonData = File.ReadAllText(@"Resources\Players.json");
-            List<Player> allPlayers = JsonConvert.DeserializeObject<List<Player>>(jsonData);
-            modelBuilder.Entity<Player>().HasData(allPlayers);
+            string jsonData = File.ReadAllText(@"Resources\Matches.json");
+            List<Match> allMatches = JsonConvert.DeserializeObject<List<Match>>(jsonData);
+            modelBuilder.Entity<Match>().HasData(allMatches);
         }
     }
 }

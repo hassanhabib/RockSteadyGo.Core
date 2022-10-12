@@ -29,11 +29,13 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
         private static void AddConfigurations(ModelBuilder modelBuilder)
         {
             AddPlayerConfigurations(modelBuilder);
+            AddMatchesConfigurations(modelBuilder);
         }
 
         private void AddSeedData(ModelBuilder modelBuilder)
         {
             AddPlayersSeedData(modelBuilder);
+            AddMatchesSeedData(modelBuilder);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
