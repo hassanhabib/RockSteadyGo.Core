@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -59,6 +60,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
 
                 throw CreateAndLogDependencyException(failedPlayerStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedPlayerServiceException =
+                    new FailedPlayerServiceException(exception);
+
+                throw CreateAndLogServiceException(failedPlayerServiceException);
+            }
         }
 
         private PlayerValidationException CreateAndLogValidationException(Xeption exception)
@@ -96,6 +104,15 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
             this.loggingBroker.LogError(playerDependencyException);
 
             return playerDependencyException;
+        }
+
+        private PlayerServiceException CreateAndLogServiceException(
+            Xeption exception)
+        {
+            var playerServiceException = new PlayerServiceException(exception);
+            this.loggingBroker.LogError(playerServiceException);
+
+            return playerServiceException;
         }
     }
 }
