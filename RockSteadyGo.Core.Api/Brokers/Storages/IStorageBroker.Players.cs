@@ -11,5 +11,6 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
         IQueryable<Player> SelectAllPlayers();
         ValueTask<Player> SelectPlayerByIdAsync(Guid playerId);
         ValueTask<Player> UpdatePlayerAsync(Player player);
+        ValueTask<Player> DeletePlayerAsync(Player player);
     }
 }
