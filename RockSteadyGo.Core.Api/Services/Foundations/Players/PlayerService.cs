@@ -53,12 +53,15 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
                 return maybePlayer;
             });
 
-        public async ValueTask<Player> ModifyPlayerAsync(Player player)
-        {
-            Player maybePlayer =
+        public ValueTask<Player> ModifyPlayerAsync(Player player) =>
+            TryCatch(async () =>
+            {
+                ValidatePlayerOnModify(player);
+
+                Player maybePlayer =
                     await this.storageBroker.SelectPlayerByIdAsync(player.Id);
 
-            return await this.storageBroker.UpdatePlayerAsync(player);
-        }
+                return await this.storageBroker.UpdatePlayerAsync(player);
+            });
     }
 }

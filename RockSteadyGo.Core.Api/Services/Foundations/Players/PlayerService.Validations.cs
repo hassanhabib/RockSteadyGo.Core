@@ -23,6 +23,17 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
                 (Rule: IsNotRecent(player.CreatedDate), Parameter: nameof(Player.CreatedDate)));
         }
 
+        private void ValidatePlayerOnModify(Player player)
+        {
+            ValidatePlayerIsNotNull(player);
+
+            Validate(
+                (Rule: IsInvalid(player.Id), Parameter: nameof(Player.Id)),
+                (Rule: IsInvalid(player.Name), Parameter: nameof(Player.Name)),
+                (Rule: IsInvalid(player.Username), Parameter: nameof(Player.Username)),
+                (Rule: IsInvalid(player.CreatedDate), Parameter: nameof(Player.CreatedDate)));
+        }
+
         public void ValidatePlayerId(Guid playerId) =>
             Validate((Rule: IsInvalid(playerId), Parameter: nameof(Player.Id)));
 
