@@ -7,13 +7,12 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using RockSteadyGo.Core.Api.Models.Matches;
-using RockSteadyGo.Core.Api.Models.Players;
 
 namespace RockSteadyGo.Core.Api.Brokers.Storages
 {
     public partial class StorageBroker
     {
-        public DbSet<Player> Matches { get; set; }
+        public DbSet<Match> Matches { get; set; }
 
         public async ValueTask<Match> InsertMatchAsync(Match match)
         {
