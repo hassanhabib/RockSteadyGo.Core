@@ -58,5 +58,48 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedPlayerServiceException =
+                new FailedPlayerServiceException(serviceException);
+
+            var expectedPlayerServiceException =
+                new PlayerServiceException(failedPlayerServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPlayerByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Player> retrievePlayerByIdTask =
+                this.playerService.RetrievePlayerByIdAsync(someId);
+
+            PlayerServiceException actualPlayerServiceException =
+                await Assert.ThrowsAsync<PlayerServiceException>(
+                    retrievePlayerByIdTask.AsTask);
+
+            // then
+            actualPlayerServiceException.Should()
+                .BeEquivalentTo(expectedPlayerServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPlayerByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogError(It.Is(SameExceptionAs(
+                   expectedPlayerServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
