@@ -23,5 +23,13 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
 
             return playerEntityEntry.Entity;
         }
+
+        public IQueryable<Player> SelectAllPlayers()
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            return broker.Players;
+        }
     }
 }
