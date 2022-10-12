@@ -83,6 +83,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
                     new FailedPlayerStorageException(sqlException);
                 throw CreateAndLogCriticalDependencyException(failedPlayerStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedPlayerServiceException =
+                    new FailedPlayerServiceException(exception);
+
+                throw CreateAndLogServiceException(failedPlayerServiceException);
+            }
         }
 
         private PlayerValidationException CreateAndLogValidationException(Xeption exception)
