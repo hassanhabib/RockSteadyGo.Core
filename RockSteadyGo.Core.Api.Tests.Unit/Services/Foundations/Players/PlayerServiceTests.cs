@@ -5,6 +5,8 @@
 
 using System;
 using System.Linq.Expressions;
+using System.Runtime.Serialization;
+using Microsoft.Data.SqlClient;
 using Moq;
 using RockSteadyGo.Core.Api.Brokers.DateTimes;
 using RockSteadyGo.Core.Api.Brokers.Loggings;
@@ -57,11 +59,17 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
             };
         }
 
+        private static SqlException GetSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
         private static Player CreateRandomPlayer(DateTimeOffset dateTimeOffset) =>
             CreatePlayerFiller(dateTimeOffset).Create();
+
+        private static Player CreateRandomPlayer() =>
+            CreatePlayerFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
 
         private static Filler<Player> CreatePlayerFiller(DateTimeOffset dateTimeOffset)
         {
