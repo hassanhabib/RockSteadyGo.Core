@@ -26,7 +26,7 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
 
             Player randomModifiedPlayer = CreateRandomModifyPlayer(
                 id: storagePlayer.Id,
-                createdDate: randomDateTimeOffset,
+                createdDate: storagePlayer.CreatedDate,
                 updatedDate: randomDateTimeOffset);
 
             Player inputPlayer = randomModifiedPlayer;
