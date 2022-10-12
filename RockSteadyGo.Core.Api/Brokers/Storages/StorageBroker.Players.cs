@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -34,6 +35,14 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
                 new StorageBroker(this.configuration);
 
             return broker.Players;
+        }
+
+        public async ValueTask<Player> SelectPlayerByIdAsync(Guid playerId)
+        {
+            using var broker =
+                new StorageBroker(this.configuration);
+
+            return await broker.Players.FindAsync(playerId);
         }
     }
 }
