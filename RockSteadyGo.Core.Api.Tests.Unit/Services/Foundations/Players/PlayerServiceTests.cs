@@ -69,6 +69,15 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
+        private static Player CreateRandomModifyPlayer(Guid id, DateTimeOffset createdDate, DateTimeOffset updatedDate)
+        {
+            Player randomPlayer = CreateRandomPlayer(updatedDate);
+            randomPlayer.Id = id;
+            randomPlayer.CreatedDate = createdDate;
+
+            return randomPlayer;
+        }
+
         private static IQueryable<Player> CreateRandomPlayers()
         {
             return CreatePlayerFiller(dateTimeOffset: GetRandomDateTimeOffset())
