@@ -66,5 +66,8 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
 
                 return await this.storageBroker.UpdatePlayerAsync(player);
             });
+
+        public ValueTask<Player> RemovePlayerByIdAsync(Guid playerId) =>
+            throw new NotImplementedException();
     }
 }
