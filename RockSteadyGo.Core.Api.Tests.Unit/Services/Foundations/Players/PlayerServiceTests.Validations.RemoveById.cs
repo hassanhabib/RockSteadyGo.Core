@@ -16,10 +16,10 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
     public partial class PlayerServiceTests
     {
         [Fact]
-        public async Task ShouldThrowValidationExceptionOnRetrieveByIdIfIdIsInvalidAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnRemoveIfIdIsInvalidAndLogItAsync()
         {
             // given
-            var invalidPlayerId = Guid.Empty;
+            Guid invalidPlayerId = Guid.Empty;
 
             var invalidPlayerException =
                 new InvalidPlayerException();
@@ -32,12 +32,12 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
                 new PlayerValidationException(invalidPlayerException);
 
             // when
-            ValueTask<Player> retrievePlayerByIdTask =
-                this.playerService.RetrievePlayerByIdAsync(invalidPlayerId);
+            ValueTask<Player> removePlayerByIdTask =
+                this.playerService.RemovePlayerByIdAsync(invalidPlayerId);
 
             PlayerValidationException actualPlayerValidationException =
                 await Assert.ThrowsAsync<PlayerValidationException>(
-                    retrievePlayerByIdTask.AsTask);
+                    removePlayerByIdTask.AsTask);
 
             // then
             actualPlayerValidationException.Should()
@@ -49,7 +49,7 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
-                broker.SelectPlayerByIdAsync(It.IsAny<Guid>()),
+                broker.DeletePlayerAsync(It.IsAny<Player>()),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
@@ -58,7 +58,7 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
         }
 
         [Fact]
-        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfPlayerIsNotFoundAndLogItAsync()
+        public async Task ShouldThrowValidationExceptionOnRemoveIfPlayerDoesNotExistAndLogItAsync()
         {
             //given
             Guid somePlayerId = Guid.NewGuid();
@@ -75,12 +75,12 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
                     .ReturnsAsync(noPlayer);
 
             //when
-            ValueTask<Player> retrievePlayerByIdTask =
-                this.playerService.RetrievePlayerByIdAsync(somePlayerId);
+            ValueTask<Player> removePlayerByIdTask =
+                this.playerService.RemovePlayerByIdAsync(somePlayerId);
 
             PlayerValidationException actualPlayerValidationException =
                 await Assert.ThrowsAsync<PlayerValidationException>(
-                    retrievePlayerByIdTask.AsTask);
+                    removePlayerByIdTask.AsTask);
 
             //then
             actualPlayerValidationException.Should().BeEquivalentTo(expectedPlayerValidationException);
