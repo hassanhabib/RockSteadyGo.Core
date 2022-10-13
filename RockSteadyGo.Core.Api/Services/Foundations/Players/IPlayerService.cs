@@ -15,5 +15,6 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
         ValueTask<Player> AddPlayerAsync(Player player);
         IQueryable<Player> RetrieveAllPlayers();
         ValueTask<Player> RetrievePlayerByIdAsync(Guid playerId);
+        ValueTask<Player> ModifyPlayerAsync(Player player);
     }
 }

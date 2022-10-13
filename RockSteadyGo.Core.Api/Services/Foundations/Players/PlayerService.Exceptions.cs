@@ -59,6 +59,12 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Players
 
                 throw CreateAndLogDependencyValidationException(invalidPlayerReferenceException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedPlayerException = new LockedPlayerException(dbUpdateConcurrencyException);
+
+                throw CreateAndLogDependencyValidationException(lockedPlayerException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedPlayerStorageException =
