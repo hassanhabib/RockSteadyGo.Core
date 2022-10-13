@@ -116,5 +116,48 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnRemoveWhenSqlExceptionOccursAndLogItAsync()
+        {
+            // given
+            Guid somePlayerId = Guid.NewGuid();
+            SqlException sqlException = GetSqlException();
+
+            var failedPlayerStorageException =
+                new FailedPlayerStorageException(sqlException);
+
+            var expectedPlayerDependencyException =
+                new PlayerDependencyException(failedPlayerStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectPlayerByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sqlException);
+
+            // when
+            ValueTask<Player> deletePlayerTask =
+                this.playerService.RemovePlayerByIdAsync(somePlayerId);
+
+            PlayerDependencyException actualPlayerDependencyException =
+                await Assert.ThrowsAsync<PlayerDependencyException>(
+                    deletePlayerTask.AsTask);
+
+            // then
+            actualPlayerDependencyException.Should()
+                .BeEquivalentTo(expectedPlayerDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectPlayerByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedPlayerDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
