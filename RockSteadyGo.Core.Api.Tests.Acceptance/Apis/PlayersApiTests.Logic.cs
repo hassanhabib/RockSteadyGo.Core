@@ -46,5 +46,20 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Players
                 await this.apiBroker.DeletePlayerByIdAsync(actualPlayer.Id);
             }
         }
+
+        [Fact]
+        public async Task ShouldGetPlayerAsync()
+        {
+            // given
+            Player randomPlayer = await PostRandomPlayerAsync();
+            Player expectedPlayer = randomPlayer;
+
+            // when
+            Player actualPlayer = await this.apiBroker.GetPlayerByIdAsync(randomPlayer.Id);
+
+            // then
+            actualPlayer.Should().BeEquivalentTo(expectedPlayer);
+            await this.apiBroker.DeletePlayerByIdAsync(actualPlayer.Id);
+        }
     }
 }
