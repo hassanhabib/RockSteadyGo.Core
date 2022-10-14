@@ -56,5 +56,47 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfMatchIsNotFoundAndLogItAsync()
+        {
+            //given
+            Guid someMatchId = Guid.NewGuid();
+            Match noMatch = null;
+
+            var notFoundMatchException =
+                new NotFoundMatchException(someMatchId);
+
+            var expectedMatchValidationException =
+                new MatchValidationException(notFoundMatchException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMatchByIdAsync(It.IsAny<Guid>()))
+                    .ReturnsAsync(noMatch);
+
+            //when
+            ValueTask<Match> retrieveMatchByIdTask =
+                this.matchService.RetrieveMatchByIdAsync(someMatchId);
+
+            MatchValidationException actualMatchValidationException =
+                await Assert.ThrowsAsync<MatchValidationException>(
+                    retrieveMatchByIdTask.AsTask);
+
+            //then
+            actualMatchValidationException.Should().BeEquivalentTo(expectedMatchValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMatchByIdAsync(It.IsAny<Guid>()),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMatchValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
