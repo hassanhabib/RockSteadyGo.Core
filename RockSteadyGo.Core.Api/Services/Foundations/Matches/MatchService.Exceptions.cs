@@ -41,6 +41,10 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
 
                 throw CreateAndLogCriticalDependencyException(failedMatchStorageException);
             }
+            catch (NotFoundMatchException notFoundMatchException)
+            {
+                throw CreateAndLogValidationException(notFoundMatchException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsMatchException =

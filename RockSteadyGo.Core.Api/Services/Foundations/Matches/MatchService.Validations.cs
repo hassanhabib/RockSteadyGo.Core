@@ -21,6 +21,17 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
                 (Rule: IsNotRecent(match.CreatedDate), Parameter: nameof(Match.CreatedDate)));
         }
 
+        public void ValidateMatchId(Guid matchId) =>
+            Validate((Rule: IsInvalid(matchId), Parameter: nameof(Match.Id)));
+
+        private static void ValidateStorageMatch(Match maybeMatch, Guid matchId)
+        {
+            if (maybeMatch is null)
+            {
+                throw new NotFoundMatchException(matchId);
+            }
+        }
+
         private static void ValidateMatchIsNotNull(Match match)
         {
             if (match is null)
