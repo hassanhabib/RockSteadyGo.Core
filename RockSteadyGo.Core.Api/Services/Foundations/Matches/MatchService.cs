@@ -45,8 +45,12 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
             {
                 ValidateMatchId(matchId);
 
-                return await this.storageBroker
+                Match maybeMatch = await this.storageBroker
                     .SelectMatchByIdAsync(matchId);
+
+                ValidateStorageMatch(maybeMatch, matchId);
+
+                return maybeMatch;
             });
     }
 }
