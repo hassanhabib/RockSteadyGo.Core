@@ -26,6 +26,10 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
             {
                 throw CreateAndLogValidationException(nullMatchException);
             }
+            catch (InvalidMatchException invalidMatchException)
+            {
+                throw CreateAndLogValidationException(invalidMatchException);
+            }
         }
 
         private MatchValidationException CreateAndLogValidationException(Xeption exception)

@@ -44,7 +44,7 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Never());
+                    Times.Once());
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertMatchAsync(inputMatch),
