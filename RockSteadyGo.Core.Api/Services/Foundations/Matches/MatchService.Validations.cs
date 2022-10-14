@@ -32,6 +32,15 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
             }
         }
 
+        private void ValidateMatchOnModify(Match match)
+        {
+            ValidateMatchIsNotNull(match);
+
+            Validate(
+                (Rule: IsInvalid(match.Id), Parameter: nameof(Match.Id)),
+                (Rule: IsInvalid(match.CreatedDate), Parameter: nameof(Match.CreatedDate)));
+        }
+
         private static void ValidateMatchIsNotNull(Match match)
         {
             if (match is null)
