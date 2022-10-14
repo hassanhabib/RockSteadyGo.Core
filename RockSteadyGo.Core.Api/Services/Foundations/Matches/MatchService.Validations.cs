@@ -32,6 +32,16 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
             }
         }
 
+        private static void ValidateAgainstStorageMatchOnModify(Match inputMatch, Match storageMatch)
+        {
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputMatch.CreatedDate,
+                    secondDate: storageMatch.CreatedDate,
+                    secondDateName: nameof(Match.CreatedDate)),
+                Parameter: nameof(Match.CreatedDate)));
+        }
+
         private void ValidateMatchOnModify(Match match)
         {
             ValidateMatchIsNotNull(match);
@@ -74,6 +84,24 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
 
             return timeDifference.TotalSeconds is > 60 or < 0;
         }
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
+
+        private static dynamic IsNotSame(
+            Guid firstId,
+            Guid secondId,
+            string secondIdName) => new
+            {
+                Condition = firstId != secondId,
+                Message = $"Id is not the same as {secondIdName}"
+            };
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
