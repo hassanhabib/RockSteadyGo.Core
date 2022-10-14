@@ -1,3 +1,8 @@
+// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -51,10 +56,7 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Matches
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
-                .OnProperty(match => match.CreatedDate).Use(now)
-                .OnProperty(match => match.CreatedByUserId).Use(userId)
-                .OnProperty(match => match.UpdatedDate).Use(now)
-                .OnProperty(match => match.UpdatedByUserId).Use(userId);
+                .OnProperty(match => match.CreatedDate).Use(now);
 
             return filler;
         }
