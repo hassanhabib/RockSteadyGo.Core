@@ -5,6 +5,7 @@
 
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using RockSteadyGo.Core.Api.Models.Matches;
 using RockSteadyGo.Core.Api.Models.Matches.Exceptions;
 using Xeptions;
@@ -30,6 +31,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
             {
                 throw CreateAndLogValidationException(invalidMatchException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedMatchStorageException =
+                    new FailedMatchStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedMatchStorageException);
+            }
         }
 
         private MatchValidationException CreateAndLogValidationException(Xeption exception)
@@ -40,6 +48,14 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
             this.loggingBroker.LogError(matchValidationException);
 
             return matchValidationException;
+        }
+
+        private MatchDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
+        {
+            var matchDependencyException = new MatchDependencyException(exception);
+            this.loggingBroker.LogCritical(matchDependencyException);
+
+            return matchDependencyException;
         }
     }
 }
