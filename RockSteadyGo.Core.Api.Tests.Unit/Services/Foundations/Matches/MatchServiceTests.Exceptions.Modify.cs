@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -55,6 +56,60 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateMatchAsync(randomMatch),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async void ShouldThrowValidationExceptionOnModifyIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Match someMatch = CreateRandomMatch();
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidMatchReferenceException =
+                new InvalidMatchReferenceException(foreignKeyConstraintConflictException);
+
+            MatchDependencyValidationException expectedMatchDependencyValidationException =
+                new MatchDependencyValidationException(invalidMatchReferenceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMatchByIdAsync(someMatch.Id))
+                    .Throws(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Match> modifyMatchTask =
+                this.matchService.ModifyMatchAsync(someMatch);
+
+            MatchDependencyValidationException actualMatchDependencyValidationException =
+                await Assert.ThrowsAsync<MatchDependencyValidationException>(
+                    modifyMatchTask.AsTask);
+
+            // then
+            actualMatchDependencyValidationException.Should()
+                .BeEquivalentTo(expectedMatchDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMatchByIdAsync(someMatch.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(expectedMatchDependencyValidationException))),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateMatchAsync(someMatch),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
