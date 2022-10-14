@@ -19,6 +19,24 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Matches
         private int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static DateTimeOffset GetRandomDateTime() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static Match UpdateMatchWithRandomValues(Match inputMatch)
+        {
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+            var filler = new Filler<Match>();
+
+            filler.Setup()
+                .OnProperty(match => match.Id).Use(inputMatch.Id)
+                .OnType<DateTimeOffset>().Use(GetRandomDateTime())
+                .OnProperty(match => match.CreatedDate).Use(inputMatch.CreatedDate)
+                .OnProperty(match => match.CreatedByUserId).Use(inputMatch.CreatedByUserId)
+                .OnProperty(match => match.UpdatedDate).Use(now);
+
+            return filler.Create();
+        }
+
         private async ValueTask<Match> PostRandomMatchAsync()
         {
             Match randomMatch = CreateRandomMatch();
