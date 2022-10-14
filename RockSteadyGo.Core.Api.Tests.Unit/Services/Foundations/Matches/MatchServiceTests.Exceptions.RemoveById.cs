@@ -116,5 +116,48 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnRemoveWhenSqlExceptionOccursAndLogItAsync()
+        {
+            // given
+            Guid someMatchId = Guid.NewGuid();
+            SqlException sqlException = GetSqlException();
+
+            var failedMatchStorageException =
+                new FailedMatchStorageException(sqlException);
+
+            var expectedMatchDependencyException =
+                new MatchDependencyException(failedMatchStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMatchByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(sqlException);
+
+            // when
+            ValueTask<Match> deleteMatchTask =
+                this.matchService.RemoveMatchByIdAsync(someMatchId);
+
+            MatchDependencyException actualMatchDependencyException =
+                await Assert.ThrowsAsync<MatchDependencyException>(
+                    deleteMatchTask.AsTask);
+
+            // then
+            actualMatchDependencyException.Should()
+                .BeEquivalentTo(expectedMatchDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMatchByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogCritical(It.Is(SameExceptionAs(
+                    expectedMatchDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
