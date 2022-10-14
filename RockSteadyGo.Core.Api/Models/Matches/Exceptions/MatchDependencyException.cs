@@ -7,10 +7,10 @@ using Xeptions;
 
 namespace RockSteadyGo.Core.Api.Models.Matches.Exceptions
 {
-    public class InvalidMatchException : Xeption
+    public class MatchDependencyException : Xeption
     {
-        public InvalidMatchException()
-            : base(message: "Invalid match. Please correct the errors and try again.")
+        public MatchDependencyException(Xeption innerException) :
+            base(message: "Match dependency error occurred, contact support.", innerException)
         { }
     }
 }

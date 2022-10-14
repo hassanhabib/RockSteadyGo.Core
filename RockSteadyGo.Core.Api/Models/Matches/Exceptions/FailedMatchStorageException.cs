@@ -3,14 +3,15 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using Xeptions;
 
 namespace RockSteadyGo.Core.Api.Models.Matches.Exceptions
 {
-    public class InvalidMatchException : Xeption
+    public class FailedMatchStorageException : Xeption
     {
-        public InvalidMatchException()
-            : base(message: "Invalid match. Please correct the errors and try again.")
+        public FailedMatchStorageException(Exception innerException)
+            : base(message: "Failed match storage error occurred, contact support.", innerException)
         { }
     }
 }
