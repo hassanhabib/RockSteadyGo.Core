@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using RESTFulSense.Exceptions;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Matches;
 using Xunit;
 
@@ -76,6 +77,28 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Matches
             // then
             actualMatch.Should().BeEquivalentTo(modifiedMatch);
             await this.apiBroker.DeleteMatchByIdAsync(actualMatch.Id);
+        }
+
+        [Fact]
+        public async Task ShouldDeleteMatchAsync()
+        {
+            // given
+            Match randomMatch = await PostRandomMatchAsync();
+            Match inputMatch = randomMatch;
+            Match expectedMatch = inputMatch;
+
+            // when
+            Match deletedMatch =
+                await this.apiBroker.DeleteMatchByIdAsync(inputMatch.Id);
+
+            ValueTask<Match> getMatchbyIdTask =
+                this.apiBroker.GetMatchByIdAsync(inputMatch.Id);
+
+            // then
+            deletedMatch.Should().BeEquivalentTo(expectedMatch);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+                getMatchbyIdTask.AsTask());
         }
     }
 }
