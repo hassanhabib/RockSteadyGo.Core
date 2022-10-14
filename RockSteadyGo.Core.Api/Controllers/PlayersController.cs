@@ -99,5 +99,44 @@ namespace RockSteadyGo.Core.Api.Controllers
                 return InternalServerError(playerServiceException);
             }
         }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Player>> PutPlayerAsync(Player player)
+        {
+            try
+            {
+                Player modifiedPlayer =
+                    await this.playerService.ModifyPlayerAsync(player);
+
+                return Ok(modifiedPlayer);
+            }
+            catch (PlayerValidationException playerValidationException)
+                when (playerValidationException.InnerException is NotFoundPlayerException)
+            {
+                return NotFound(playerValidationException.InnerException);
+            }
+            catch (PlayerValidationException playerValidationException)
+            {
+                return BadRequest(playerValidationException.InnerException);
+            }
+            catch (PlayerDependencyValidationException playerValidationException)
+                when (playerValidationException.InnerException is InvalidPlayerReferenceException)
+            {
+                return FailedDependency(playerValidationException.InnerException);
+            }
+            catch (PlayerDependencyValidationException playerDependencyValidationException)
+               when (playerDependencyValidationException.InnerException is AlreadyExistsPlayerException)
+            {
+                return Conflict(playerDependencyValidationException.InnerException);
+            }
+            catch (PlayerDependencyException playerDependencyException)
+            {
+                return InternalServerError(playerDependencyException);
+            }
+            catch (PlayerServiceException playerServiceException)
+            {
+                return InternalServerError(playerServiceException);
+            }
+        }
     }
 }
