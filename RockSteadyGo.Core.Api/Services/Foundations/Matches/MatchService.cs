@@ -27,7 +27,12 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Match> AddMatchAsync(Match match) =>
-            await this.storageBroker.InsertMatchAsync(match);
+        public ValueTask<Match> AddMatchAsync(Match match) =>
+            TryCatch(async () =>
+            {
+                ValidateMatchOnAdd(match);
+
+                return await this.storageBroker.InsertMatchAsync(match);
+            });
     }
 }

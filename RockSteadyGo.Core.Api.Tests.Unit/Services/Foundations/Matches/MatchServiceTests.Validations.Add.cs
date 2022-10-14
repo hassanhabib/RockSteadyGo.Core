@@ -6,6 +6,7 @@
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using RockSteadyGo.Core.Api.Models.Matches.Exceptions;
 using Xunit;
 using Match = RockSteadyGo.Core.Api.Models.Matches.Match;
 
