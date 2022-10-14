@@ -4,6 +4,8 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using RockSteadyGo.Core.Api.Models.Moves;
 
 namespace RockSteadyGo.Core.Api.Models.Matches
 {
@@ -11,5 +13,6 @@ namespace RockSteadyGo.Core.Api.Models.Matches
     {
         public Guid Id { get; set; }
         public DateTimeOffset CreatedDate { get; set; }
+        public List<Move> Moves { get; set; }
     }
 }

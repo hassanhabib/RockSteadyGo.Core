@@ -1,0 +1,173 @@
+[
+  {
+    "Id": "c0c7da2e-ac6b-46f5-9688-678842d24281",
+    "MatchId": "f1cc8633-6999-40f2-90b5-4b37c824318f",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "0",
+    "LocationY": "2",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:00:05 +00:00"
+  },
+  {
+    "Id": "c0c7da2e-ac6b-46f5-9688-678842d24282",
+    "MatchId": "f1cc8633-6999-40f2-90b5-4b37c824318f",
+    "PlayerId": "edaf90dc-1e0f-4d6c-9871-93148f081b1c",
+    "LocationX": "2",
+    "LocationY": "0",
+    "Type": "0",
+    "CreatedDate": "02/02/2020 00:00:10 +00:00"
+  },
+  {
+    "Id": "c0c7da2e-ac6b-46f5-9688-678842d24283",
+    "MatchId": "f1cc8633-6999-40f2-90b5-4b37c824318f",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "1",
+    "LocationY": "2",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:00:15 +00:00"
+  },
+  {
+    "Id": "c0c7da2e-ac6b-46f5-9688-678842d24284",
+    "MatchId": "f1cc8633-6999-40f2-90b5-4b37c824318f",
+    "PlayerId": "edaf90dc-1e0f-4d6c-9871-93148f081b1c",
+    "LocationX": "2",
+    "LocationY": "2",
+    "Type": "0",
+    "CreatedDate": "02/02/2020 00:00:20 +00:00"
+  },
+  {
+    "Id": "c0c7da2e-ac6b-46f5-9688-678842d24285",
+    "MatchId": "f1cc8633-6999-40f2-90b5-4b37c824318f",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "2",
+    "LocationY": "1",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:00:25 +00:00"
+  },
+  {
+    "Id": "c0c7da2e-ac6b-46f5-9688-678842d24286",
+    "MatchId": "f1cc8633-6999-40f2-90b5-4b37c824318f",
+    "PlayerId": "edaf90dc-1e0f-4d6c-9871-93148f081b1c",
+    "LocationX": "1",
+    "LocationY": "1",
+    "Type": "0",
+    "CreatedDate": "02/02/2020 00:00:30 +00:00"
+  },
+  {
+    "Id": "c0c7da2e-ac6b-46f5-9688-678842d24287",
+    "MatchId": "f1cc8633-6999-40f2-90b5-4b37c824318f",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "1",
+    "LocationY": "0",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:00:35 +00:00"
+  },
+  {
+    "Id": "c0c7da2e-ac6b-46f5-9688-678842d24288",
+    "MatchId": "f1cc8633-6999-40f2-90b5-4b37c824318f",
+    "PlayerId": "edaf90dc-1e0f-4d6c-9871-93148f081b1c",
+    "LocationX": "0",
+    "LocationY": "1",
+    "Type": "0",
+    "CreatedDate": "02/02/2020 00:00:40 +00:00"
+  },
+  {
+    "Id": "c0c7da2e-ac6b-46f5-9688-678842d24289",
+    "MatchId": "f1cc8633-6999-40f2-90b5-4b37c824318f",
+    "PlayerId": "edaf90dc-1e0f-4d6c-9871-93148f081b1c",
+    "LocationX": "0",
+    "LocationY": "0",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:00:45 +00:00"
+  },
+  {
+    "Id": "a7c37018-3459-49cb-852f-20a74eed4ef1",
+    "MatchId": "e4fc700e-a737-40e9-82d8-ffb85795ea61",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "0",
+    "LocationY": "2",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:05:05 +00:00"
+  },
+  {
+    "Id": "a7c37018-3459-49cb-852f-20a74eed4ef2",
+    "MatchId": "e4fc700e-a737-40e9-82d8-ffb85795ea61",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "2",
+    "LocationY": "0",
+    "Type": "0",
+    "CreatedDate": "02/02/2020 00:05:10 +00:00"
+  },
+  {
+    "Id": "a7c37018-3459-49cb-852f-20a74eed4ef3",
+    "MatchId": "e4fc700e-a737-40e9-82d8-ffb85795ea61",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "1",
+    "LocationY": "2",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:05:15 +00:00"
+  },
+  {
+    "Id": "a7c37018-3459-49cb-852f-20a74eed4ef4",
+    "MatchId": "e4fc700e-a737-40e9-82d8-ffb85795ea61",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "2",
+    "LocationY": "2",
+    "Type": "0",
+    "CreatedDate": "02/02/2020 00:05:20 +00:00"
+  },
+  {
+    "Id": "a7c37018-3459-49cb-852f-20a74eed4ef5",
+    "MatchId": "e4fc700e-a737-40e9-82d8-ffb85795ea61",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "2",
+    "LocationY": "1",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:05:25 +00:00"
+  },
+  {
+    "Id": "a7c37018-3459-49cb-852f-20a74eed4ef6",
+    "MatchId": "e4fc700e-a737-40e9-82d8-ffb85795ea61",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "1",
+    "LocationY": "1",
+    "Type": "0",
+    "CreatedDate": "02/02/2020 00:05:30 +00:00"
+  },
+  {
+    "Id": "a7c37018-3459-49cb-852f-20a74eed4ef7",
+    "MatchId": "e4fc700e-a737-40e9-82d8-ffb85795ea61",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "1",
+    "LocationY": "0",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:05:35 +00:00"
+  },
+  {
+    "Id": "a7c37018-3459-49cb-852f-20a74eed4ef8",
+    "MatchId": "e4fc700e-a737-40e9-82d8-ffb85795ea61",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "0",
+    "LocationY": "1",
+    "Type": "0",
+    "CreatedDate": "02/02/2020 00:05:40 +00:00"
+  },
+  {
+    "Id": "a7c37018-3459-49cb-852f-20a74eed4ef9",
+    "MatchId": "e4fc700e-a737-40e9-82d8-ffb85795ea61",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "0",
+    "LocationY": "0",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:05:45 +00:00"
+  },
+  {
+    "Id": "1da5dc08-1294-459e-8c63-e3d846acd170",
+    "MatchId": "445b3d2c-2d69-4ae0-9b0a-269c213c35d1",
+    "PlayerId": "ca66ac15-7b4f-4a4a-a51d-337983545900",
+    "LocationX": "0",
+    "LocationY": "2",
+    "Type": "1",
+    "CreatedDate": "02/02/2020 00:10:00 +00:00"
+  }
+]
