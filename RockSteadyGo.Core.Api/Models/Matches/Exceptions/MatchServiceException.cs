@@ -8,9 +8,10 @@ using Xeptions;
 
 namespace RockSteadyGo.Core.Api.Models.Matches.Exceptions
 {
-    public class InvalidMatchReferenceException : Xeption
+    public class MatchServiceException : Xeption
     {
-        public InvalidMatchReferenceException(Exception innerException)
-            : base(message: "Invalid match reference error occurred.", innerException) { }
+        public MatchServiceException(Exception innerException)
+            : base(message: "Match service error occurred, contact support.", innerException)
+        { }
     }
 }
