@@ -59,6 +59,12 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
 
                 throw CreateAndLogDependencyValidationException(invalidMatchReferenceException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedMatchException = new LockedMatchException(dbUpdateConcurrencyException);
+
+                throw CreateAndLogDependencyValidationException(lockedMatchException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedMatchStorageException =
