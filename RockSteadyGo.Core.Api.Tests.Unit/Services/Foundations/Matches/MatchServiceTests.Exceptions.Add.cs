@@ -113,5 +113,56 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Match someMatch = CreateRandomMatch();
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidMatchReferenceException =
+                new InvalidMatchReferenceException(foreignKeyConstraintConflictException);
+
+            var expectedMatchValidationException =
+                new MatchDependencyValidationException(invalidMatchReferenceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Match> addMatchTask =
+                this.matchService.AddMatchAsync(someMatch);
+
+            // then
+            MatchDependencyValidationException actualMatchDependencyValidationException =
+                await Assert.ThrowsAsync<MatchDependencyValidationException>(
+                    addMatchTask.AsTask);
+
+            actualMatchDependencyValidationException.Should()
+                .BeEquivalentTo(expectedMatchValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMatchValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertMatchAsync(someMatch),
+                    Times.Never());
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
