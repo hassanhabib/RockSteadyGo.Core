@@ -1,7 +1,6 @@
 // ---------------------------------------------------------------
-// Copyright (c) Christo du Toit. All rights reserved.
-// Licensed under the MIT License.
-// See License.txt in the project root for license information.
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
 using System;
@@ -55,48 +54,6 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
-            this.dateTimeBrokerMock.VerifyNoOtherCalls();
-        }
-
-        [Fact]
-        public async Task ShouldThrowNotFoundExceptionOnRetrieveByIdIfMatchIsNotFoundAndLogItAsync()
-        {
-            //given
-            Guid someMatchId = Guid.NewGuid();
-            Match noMatch = null;
-
-            var notFoundMatchException =
-                new NotFoundMatchException(someMatchId);
-
-            var expectedMatchValidationException =
-                new MatchValidationException(notFoundMatchException);
-
-            this.storageBrokerMock.Setup(broker =>
-                broker.SelectMatchByIdAsync(It.IsAny<Guid>()))
-                    .ReturnsAsync(noMatch);
-
-            //when
-            ValueTask<Match> retrieveMatchByIdTask =
-                this.matchService.RetrieveMatchByIdAsync(someMatchId);
-
-            MatchValidationException actualMatchValidationException =
-                await Assert.ThrowsAsync<MatchValidationException>(
-                    retrieveMatchByIdTask.AsTask);
-
-            //then
-            actualMatchValidationException.Should().BeEquivalentTo(expectedMatchValidationException);
-
-            this.storageBrokerMock.Verify(broker =>
-                broker.SelectMatchByIdAsync(It.IsAny<Guid>()),
-                    Times.Once());
-
-            this.loggingBrokerMock.Verify(broker =>
-                broker.LogError(It.Is(SameExceptionAs(
-                    expectedMatchValidationException))),
-                        Times.Once);
-
-            this.storageBrokerMock.VerifyNoOtherCalls();
-            this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
     }
