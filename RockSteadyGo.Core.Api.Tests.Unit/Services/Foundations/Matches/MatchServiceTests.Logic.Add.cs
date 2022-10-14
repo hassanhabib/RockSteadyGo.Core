@@ -1,7 +1,6 @@
 // ---------------------------------------------------------------
-// Copyright (c) Christo du Toit. All rights reserved.
-// Licensed under the MIT License.
-// See License.txt in the project root for license information.
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
 using System;
@@ -45,7 +44,7 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
-                    Times.Once());
+                    Times.Never());
 
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertMatchAsync(inputMatch),
