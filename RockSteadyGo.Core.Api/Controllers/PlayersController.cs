@@ -138,5 +138,43 @@ namespace RockSteadyGo.Core.Api.Controllers
                 return InternalServerError(playerServiceException);
             }
         }
+
+        [HttpDelete("{playerId}")]
+        public async ValueTask<ActionResult<Player>> DeletePlayerByIdAsync(Guid playerId)
+        {
+            try
+            {
+                Player deletedPlayer =
+                    await this.playerService.RemovePlayerByIdAsync(playerId);
+
+                return Ok(deletedPlayer);
+            }
+            catch (PlayerValidationException playerValidationException)
+                when (playerValidationException.InnerException is NotFoundPlayerException)
+            {
+                return NotFound(playerValidationException.InnerException);
+            }
+            catch (PlayerValidationException playerValidationException)
+            {
+                return BadRequest(playerValidationException.InnerException);
+            }
+            catch (PlayerDependencyValidationException playerDependencyValidationException)
+                when (playerDependencyValidationException.InnerException is LockedPlayerException)
+            {
+                return Locked(playerDependencyValidationException.InnerException);
+            }
+            catch (PlayerDependencyValidationException playerDependencyValidationException)
+            {
+                return BadRequest(playerDependencyValidationException);
+            }
+            catch (PlayerDependencyException playerDependencyException)
+            {
+                return InternalServerError(playerDependencyException);
+            }
+            catch (PlayerServiceException playerServiceException)
+            {
+                return InternalServerError(playerServiceException);
+            }
+        }
     }
 }
