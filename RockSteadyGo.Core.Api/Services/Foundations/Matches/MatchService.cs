@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using RockSteadyGo.Core.Api.Brokers.DateTimes;
@@ -38,5 +39,8 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
 
         public IQueryable<Match> RetrieveAllMatches() =>
             TryCatch(() => this.storageBroker.SelectAllMatches());
+
+        public ValueTask<Match> RetrieveMatchByIdAsync(Guid matchId) =>
+            throw new NotImplementedException();
     }
 }
