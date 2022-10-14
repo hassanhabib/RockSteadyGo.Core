@@ -66,5 +66,8 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
 
                 return await this.storageBroker.UpdateMatchAsync(match);
             });
+
+        public ValueTask<Match> RemoveMatchByIdAsync(Guid matchId) =>
+            throw new NotImplementedException();
     }
 }
