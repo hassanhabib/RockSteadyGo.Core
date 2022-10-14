@@ -7,6 +7,7 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using RESTFulSense.Controllers;
 using RockSteadyGo.Core.Api.Models.Players;
 using RockSteadyGo.Core.Api.Models.Players.Exceptions;
@@ -58,6 +59,7 @@ namespace RockSteadyGo.Core.Api.Controllers
         }
 
         [HttpGet]
+        [EnableQuery]
         public ActionResult<IQueryable<Player>> GetAllPlayers()
         {
             try
