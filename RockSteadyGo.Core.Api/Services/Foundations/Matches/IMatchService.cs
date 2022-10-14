@@ -16,5 +16,6 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
         IQueryable<Match> RetrieveAllMatches();
         ValueTask<Match> RetrieveMatchByIdAsync(Guid matchId);
         ValueTask<Match> ModifyMatchAsync(Match match);
+        ValueTask<Match> RemoveMatchByIdAsync(Guid matchId);
     }
 }
