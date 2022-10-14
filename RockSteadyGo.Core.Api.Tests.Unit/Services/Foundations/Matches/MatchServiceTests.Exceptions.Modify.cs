@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
@@ -209,6 +210,57 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedMatchDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateMatchAsync(randomMatch),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnModifyIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Match randomMatch = CreateRandomMatch();
+            var serviceException = new Exception();
+
+            var failedMatchServiceException =
+                new FailedMatchServiceException(serviceException);
+
+            var expectedMatchServiceException =
+                new MatchServiceException(failedMatchServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMatchByIdAsync(randomMatch.Id))
+                    .Throws(serviceException);
+
+            // when
+            ValueTask<Match> modifyMatchTask =
+                this.matchService.ModifyMatchAsync(randomMatch);
+
+            MatchServiceException actualMatchServiceException =
+                await Assert.ThrowsAsync<MatchServiceException>(
+                    modifyMatchTask.AsTask);
+
+            // then
+            actualMatchServiceException.Should()
+                .BeEquivalentTo(expectedMatchServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMatchByIdAsync(randomMatch.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMatchServiceException))),
                         Times.Once);
 
             this.storageBrokerMock.Verify(broker =>
