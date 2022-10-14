@@ -22,5 +22,8 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
 
         public async ValueTask<Move> SelectMoveByIdAsync(Guid moveId) =>
             await SelectAsync<Move>(moveId);
+
+        public async ValueTask<Move> UpdateMoveAsync(Move move) =>
+            await UpdateAsync(move);
     }
 }
