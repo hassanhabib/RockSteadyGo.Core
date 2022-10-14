@@ -16,5 +16,6 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
         IQueryable<Move> SelectAllMoves();
         ValueTask<Move> SelectMoveByIdAsync(Guid moveId);
         ValueTask<Move> UpdateMoveAsync(Move move);
+        ValueTask<Move> DeleteMoveAsync(Move move);
     }
 }
