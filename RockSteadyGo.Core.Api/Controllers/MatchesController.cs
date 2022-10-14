@@ -138,5 +138,43 @@ namespace RockSteadyGo.Core.Api.Controllers
                 return InternalServerError(matchServiceException);
             }
         }
+
+        [HttpDelete("{matchId}")]
+        public async ValueTask<ActionResult<Match>> DeleteMatchByIdAsync(Guid matchId)
+        {
+            try
+            {
+                Match deletedMatch =
+                    await this.matchService.RemoveMatchByIdAsync(matchId);
+
+                return Ok(deletedMatch);
+            }
+            catch (MatchValidationException matchValidationException)
+                when (matchValidationException.InnerException is NotFoundMatchException)
+            {
+                return NotFound(matchValidationException.InnerException);
+            }
+            catch (MatchValidationException matchValidationException)
+            {
+                return BadRequest(matchValidationException.InnerException);
+            }
+            catch (MatchDependencyValidationException matchDependencyValidationException)
+                when (matchDependencyValidationException.InnerException is LockedMatchException)
+            {
+                return Locked(matchDependencyValidationException.InnerException);
+            }
+            catch (MatchDependencyValidationException matchDependencyValidationException)
+            {
+                return BadRequest(matchDependencyValidationException);
+            }
+            catch (MatchDependencyException matchDependencyException)
+            {
+                return InternalServerError(matchDependencyException);
+            }
+            catch (MatchServiceException matchServiceException)
+            {
+                return InternalServerError(matchServiceException);
+            }
+        }
     }
 }
