@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Matches;
@@ -24,6 +26,25 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Matches
             // then
             actualMatch.Should().BeEquivalentTo(expectedMatch);
             await this.apiBroker.DeleteMatchByIdAsync(actualMatch.Id);
+        }
+
+        [Fact]
+        public async Task ShouldGetAllMatchesAsync()
+        {
+            // given
+            List<Match> randomMatches = await PostRandomMatchesAsync();
+            List<Match> expectedMatches = randomMatches;
+
+            // when
+            List<Match> actualMatches = await this.apiBroker.GetAllMatchesAsync();
+
+            // then
+            foreach (Match expectedMatch in expectedMatches)
+            {
+                Match actualMatch = actualMatches.Single(approval => approval.Id == expectedMatch.Id);
+                actualMatch.Should().BeEquivalentTo(expectedMatch);
+                await this.apiBroker.DeleteMatchByIdAsync(actualMatch.Id);
+            }
         }
     }
 }
