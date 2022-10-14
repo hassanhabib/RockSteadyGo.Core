@@ -1,3 +1,8 @@
+// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -30,9 +35,7 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Players
             filler.Setup()
                 .OnProperty(player => player.Id).Use(inputPlayer.Id)
                 .OnType<DateTimeOffset>().Use(GetRandomDateTime())
-                .OnProperty(player => player.CreatedDate).Use(inputPlayer.CreatedDate)
-                .OnProperty(player => player.CreatedByUserId).Use(inputPlayer.CreatedByUserId)
-                .OnProperty(player => player.UpdatedDate).Use(now);
+                .OnProperty(player => player.CreatedDate).Use(inputPlayer.CreatedDate);
 
             return filler.Create();
         }
@@ -69,10 +72,7 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Players
 
             filler.Setup()
                 .OnType<DateTimeOffset>().Use(now)
-                .OnProperty(player => player.CreatedDate).Use(now)
-                .OnProperty(player => player.CreatedByUserId).Use(userId)
-                .OnProperty(player => player.UpdatedDate).Use(now)
-                .OnProperty(player => player.UpdatedByUserId).Use(userId);
+                .OnProperty(player => player.CreatedDate).Use(now);
 
             return filler;
         }
