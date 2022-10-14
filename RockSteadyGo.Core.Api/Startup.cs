@@ -13,6 +13,7 @@ using Microsoft.OpenApi.Models;
 using RockSteadyGo.Core.Api.Brokers.DateTimes;
 using RockSteadyGo.Core.Api.Brokers.Loggings;
 using RockSteadyGo.Core.Api.Brokers.Storages;
+using RockSteadyGo.Core.Api.Services.Foundations.Matches;
 using RockSteadyGo.Core.Api.Services.Foundations.Players;
 
 namespace RockSteadyGo.Core.Api
@@ -61,6 +62,7 @@ namespace RockSteadyGo.Core.Api
         private static void AddServices(IServiceCollection services)
         {
             services.AddTransient<IPlayerService, PlayerService>();
+            services.AddTransient<IMatchService, MatchService>();
         }
 
         private static void AddBrokers(IServiceCollection services)
