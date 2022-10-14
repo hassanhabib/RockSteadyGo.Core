@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
@@ -18,5 +19,8 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
             await InsertAsync(move);
 
         public IQueryable<Move> SelectAllMoves() => SelectAll<Move>();
+
+        public async ValueTask<Move> SelectMoveByIdAsync(Guid moveId) =>
+            await SelectAsync<Move>(moveId);
     }
 }
