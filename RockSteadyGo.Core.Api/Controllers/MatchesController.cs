@@ -99,5 +99,44 @@ namespace RockSteadyGo.Core.Api.Controllers
                 return InternalServerError(matchServiceException);
             }
         }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Match>> PutMatchAsync(Match match)
+        {
+            try
+            {
+                Match modifiedMatch =
+                    await this.matchService.ModifyMatchAsync(match);
+
+                return Ok(modifiedMatch);
+            }
+            catch (MatchValidationException matchValidationException)
+                when (matchValidationException.InnerException is NotFoundMatchException)
+            {
+                return NotFound(matchValidationException.InnerException);
+            }
+            catch (MatchValidationException matchValidationException)
+            {
+                return BadRequest(matchValidationException.InnerException);
+            }
+            catch (MatchDependencyValidationException matchValidationException)
+                when (matchValidationException.InnerException is InvalidMatchReferenceException)
+            {
+                return FailedDependency(matchValidationException.InnerException);
+            }
+            catch (MatchDependencyValidationException matchDependencyValidationException)
+               when (matchDependencyValidationException.InnerException is AlreadyExistsMatchException)
+            {
+                return Conflict(matchDependencyValidationException.InnerException);
+            }
+            catch (MatchDependencyException matchDependencyException)
+            {
+                return InternalServerError(matchDependencyException);
+            }
+            catch (MatchServiceException matchServiceException)
+            {
+                return InternalServerError(matchServiceException);
+            }
+        }
     }
 }
