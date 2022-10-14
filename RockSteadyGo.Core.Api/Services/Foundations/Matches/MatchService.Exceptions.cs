@@ -71,6 +71,20 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
             }
         }
 
+        private IQueryable<Match> TryCatch(ReturningMatchesFunction returningMatchesFunction)
+        {
+            try
+            {
+                return returningMatchesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedMatchStorageException =
+                    new FailedMatchStorageException(sqlException);
+                throw CreateAndLogCriticalDependencyException(failedMatchStorageException);
+            }
+        }
+
         private MatchValidationException CreateAndLogValidationException(Xeption exception)
         {
             var matchValidationException =
