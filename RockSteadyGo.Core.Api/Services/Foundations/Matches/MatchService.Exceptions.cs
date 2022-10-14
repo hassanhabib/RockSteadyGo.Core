@@ -46,6 +46,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsMatchException);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidMatchReferenceException =
+                    new InvalidMatchReferenceException(foreignKeyConstraintConflictException);
+
+                throw CreateAndLogDependencyValidationException(invalidMatchReferenceException);
+            }
         }
 
         private MatchValidationException CreateAndLogValidationException(Xeption exception)
