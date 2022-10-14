@@ -3,12 +3,13 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using Xunit;
+using System.Threading.Tasks;
+using RockSteadyGo.Core.Api.Models.Matches;
 
-namespace RockSteadyGo.Core.Api.Tests.Acceptance.Brokers
+namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
 {
-    [CollectionDefinition(nameof(ApiTestCollection))]
-    public class ApiTestCollection : ICollectionFixture<ApiBroker>
+    public interface IMatchService
     {
+        ValueTask<Match> AddMatchAsync(Match match);
     }
 }

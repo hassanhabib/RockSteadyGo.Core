@@ -3,12 +3,14 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using Xunit;
+using Xeptions;
 
-namespace RockSteadyGo.Core.Api.Tests.Acceptance.Brokers
+namespace RockSteadyGo.Core.Api.Models.Matches.Exceptions
 {
-    [CollectionDefinition(nameof(ApiTestCollection))]
-    public class ApiTestCollection : ICollectionFixture<ApiBroker>
+    public class NullMatchException : Xeption
     {
+        public NullMatchException()
+            : base(message: "Match is null.")
+        { }
     }
 }
