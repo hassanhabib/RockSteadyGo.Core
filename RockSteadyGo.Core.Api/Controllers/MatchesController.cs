@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -39,6 +40,26 @@ namespace RockSteadyGo.Core.Api.Controllers
                when (matchDependencyValidationException.InnerException is AlreadyExistsMatchException)
             {
                 return Conflict(matchDependencyValidationException.InnerException);
+            }
+            catch (MatchDependencyException matchDependencyException)
+            {
+                return InternalServerError(matchDependencyException);
+            }
+            catch (MatchServiceException matchServiceException)
+            {
+                return InternalServerError(matchServiceException);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<Match>> GetAllMatches()
+        {
+            try
+            {
+                IQueryable<Match> retrievedMatches =
+                    this.matchService.RetrieveAllMatches();
+
+                return Ok(retrievedMatches);
             }
             catch (MatchDependencyException matchDependencyException)
             {
