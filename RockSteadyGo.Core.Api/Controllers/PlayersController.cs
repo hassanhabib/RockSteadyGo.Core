@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -60,6 +61,34 @@ namespace RockSteadyGo.Core.Api.Controllers
                     this.playerService.RetrieveAllPlayers();
 
                 return Ok(retrievedPlayers);
+            }
+            catch (PlayerDependencyException playerDependencyException)
+            {
+                return InternalServerError(playerDependencyException);
+            }
+            catch (PlayerServiceException playerServiceException)
+            {
+                return InternalServerError(playerServiceException);
+            }
+        }
+
+        [HttpGet("{playerId}")]
+        public async ValueTask<ActionResult<Player>> GetPlayerByIdAsync(Guid playerId)
+        {
+            try
+            {
+                Player player = await this.playerService.RetrievePlayerByIdAsync(playerId);
+
+                return Ok(player);
+            }
+            catch (PlayerValidationException playerValidationException)
+                when (playerValidationException.InnerException is NotFoundPlayerException)
+            {
+                return NotFound(playerValidationException.InnerException);
+            }
+            catch (PlayerValidationException playerValidationException)
+            {
+                return BadRequest(playerValidationException.InnerException);
             }
             catch (PlayerDependencyException playerDependencyException)
             {
