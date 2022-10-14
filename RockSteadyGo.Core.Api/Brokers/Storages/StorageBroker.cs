@@ -21,6 +21,36 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
             Database.Migrate();
         }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            AddConfigurations(modelBuilder);
+            AddSeedData(modelBuilder);
+        }
+
+        private static void AddConfigurations(ModelBuilder modelBuilder)
+        {
+            AddPlayerConfigurations(modelBuilder);
+            AddMatchesConfigurations(modelBuilder);
+            AddMoveConfigurations(modelBuilder);
+        }
+
+        private void AddSeedData(ModelBuilder modelBuilder)
+        {
+            AddPlayersSeedData(modelBuilder);
+            AddMatchesSeedData(modelBuilder);
+            AddMovesSeedData(modelBuilder);
+        }
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
+            string connectionString = configuration.GetConnectionString(name: "DefaultConnection");
+            optionsBuilder.UseSqlServer(connectionString);
+        }
+
+        public override void Dispose() { }
+
         private async ValueTask<T> InsertAsync<T>(T @object)
         {
             this.Entry(@object).State = EntityState.Added;
@@ -49,33 +79,5 @@ namespace RockSteadyGo.Core.Api.Brokers.Storages
 
             return @object;
         }
-
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
-        {
-            base.OnModelCreating(modelBuilder);
-            AddConfigurations(modelBuilder);
-            AddSeedData(modelBuilder);
-        }
-
-        private static void AddConfigurations(ModelBuilder modelBuilder)
-        {
-            AddPlayerConfigurations(modelBuilder);
-            AddMatchesConfigurations(modelBuilder);
-        }
-
-        private void AddSeedData(ModelBuilder modelBuilder)
-        {
-            AddPlayersSeedData(modelBuilder);
-            AddMatchesSeedData(modelBuilder);
-        }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            optionsBuilder.UseQueryTrackingBehavior(QueryTrackingBehavior.NoTracking);
-            string connectionString = configuration.GetConnectionString(name: "DefaultConnection");
-            optionsBuilder.UseSqlServer(connectionString);
-        }
-
-        public override void Dispose() { }
     }
 }
