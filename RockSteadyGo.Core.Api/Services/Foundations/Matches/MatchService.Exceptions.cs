@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
@@ -61,6 +62,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
 
                 throw CreateAndLogDependencyException(failedMatchStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedMatchServiceException =
+                    new FailedMatchServiceException(exception);
+
+                throw CreateAndLogServiceException(failedMatchServiceException);
+            }
         }
 
         private MatchValidationException CreateAndLogValidationException(Xeption exception)
@@ -98,6 +106,15 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
             this.loggingBroker.LogError(matchDependencyException);
 
             return matchDependencyException;
+        }
+
+        private MatchServiceException CreateAndLogServiceException(
+            Xeption exception)
+        {
+            var matchServiceException = new MatchServiceException(exception);
+            this.loggingBroker.LogError(matchServiceException);
+
+            return matchServiceException;
         }
     }
 }
