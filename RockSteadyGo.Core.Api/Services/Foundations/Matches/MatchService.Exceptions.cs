@@ -83,6 +83,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
                     new FailedMatchStorageException(sqlException);
                 throw CreateAndLogCriticalDependencyException(failedMatchStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedMatchServiceException =
+                    new FailedMatchServiceException(exception);
+
+                throw CreateAndLogServiceException(failedMatchServiceException);
+            }
         }
 
         private MatchValidationException CreateAndLogValidationException(Xeption exception)
