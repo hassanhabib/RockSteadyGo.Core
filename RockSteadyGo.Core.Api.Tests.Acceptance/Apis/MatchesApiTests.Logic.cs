@@ -46,5 +46,20 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Matches
                 await this.apiBroker.DeleteMatchByIdAsync(actualMatch.Id);
             }
         }
+
+        [Fact]
+        public async Task ShouldGetMatchAsync()
+        {
+            // given
+            Match randomMatch = await PostRandomMatchAsync();
+            Match expectedMatch = randomMatch;
+
+            // when
+            Match actualMatch = await this.apiBroker.GetMatchByIdAsync(randomMatch.Id);
+
+            // then
+            actualMatch.Should().BeEquivalentTo(expectedMatch);
+            await this.apiBroker.DeleteMatchByIdAsync(actualMatch.Id);
+        }
     }
 }
