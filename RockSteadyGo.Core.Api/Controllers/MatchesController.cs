@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -60,6 +61,34 @@ namespace RockSteadyGo.Core.Api.Controllers
                     this.matchService.RetrieveAllMatches();
 
                 return Ok(retrievedMatches);
+            }
+            catch (MatchDependencyException matchDependencyException)
+            {
+                return InternalServerError(matchDependencyException);
+            }
+            catch (MatchServiceException matchServiceException)
+            {
+                return InternalServerError(matchServiceException);
+            }
+        }
+
+        [HttpGet("{matchId}")]
+        public async ValueTask<ActionResult<Match>> GetMatchByIdAsync(Guid matchId)
+        {
+            try
+            {
+                Match match = await this.matchService.RetrieveMatchByIdAsync(matchId);
+
+                return Ok(match);
+            }
+            catch (MatchValidationException matchValidationException)
+                when (matchValidationException.InnerException is NotFoundMatchException)
+            {
+                return NotFound(matchValidationException.InnerException);
+            }
+            catch (MatchValidationException matchValidationException)
+            {
+                return BadRequest(matchValidationException.InnerException);
             }
             catch (MatchDependencyException matchDependencyException)
             {
