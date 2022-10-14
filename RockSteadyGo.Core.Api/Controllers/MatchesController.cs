@@ -1,7 +1,13 @@
+// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
 using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using RESTFulSense.Controllers;
 using RockSteadyGo.Core.Api.Models.Matches;
 using RockSteadyGo.Core.Api.Models.Matches.Exceptions;
@@ -53,6 +59,7 @@ namespace RockSteadyGo.Core.Api.Controllers
         }
 
         [HttpGet]
+        [EnableQuery]
         public ActionResult<IQueryable<Match>> GetAllMatches()
         {
             try
@@ -128,6 +135,44 @@ namespace RockSteadyGo.Core.Api.Controllers
                when (matchDependencyValidationException.InnerException is AlreadyExistsMatchException)
             {
                 return Conflict(matchDependencyValidationException.InnerException);
+            }
+            catch (MatchDependencyException matchDependencyException)
+            {
+                return InternalServerError(matchDependencyException);
+            }
+            catch (MatchServiceException matchServiceException)
+            {
+                return InternalServerError(matchServiceException);
+            }
+        }
+
+        [HttpDelete("{matchId}")]
+        public async ValueTask<ActionResult<Match>> DeleteMatchByIdAsync(Guid matchId)
+        {
+            try
+            {
+                Match deletedMatch =
+                    await this.matchService.RemoveMatchByIdAsync(matchId);
+
+                return Ok(deletedMatch);
+            }
+            catch (MatchValidationException matchValidationException)
+                when (matchValidationException.InnerException is NotFoundMatchException)
+            {
+                return NotFound(matchValidationException.InnerException);
+            }
+            catch (MatchValidationException matchValidationException)
+            {
+                return BadRequest(matchValidationException.InnerException);
+            }
+            catch (MatchDependencyValidationException matchDependencyValidationException)
+                when (matchDependencyValidationException.InnerException is LockedMatchException)
+            {
+                return Locked(matchDependencyValidationException.InnerException);
+            }
+            catch (MatchDependencyValidationException matchDependencyValidationException)
+            {
+                return BadRequest(matchDependencyValidationException);
             }
             catch (MatchDependencyException matchDependencyException)
             {
