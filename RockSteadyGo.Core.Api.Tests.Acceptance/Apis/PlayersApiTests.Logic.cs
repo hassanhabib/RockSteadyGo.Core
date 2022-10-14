@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Players;
@@ -24,6 +26,25 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Players
             // then
             actualPlayer.Should().BeEquivalentTo(expectedPlayer);
             await this.apiBroker.DeletePlayerByIdAsync(actualPlayer.Id);
+        }
+
+        [Fact]
+        public async Task ShouldGetAllPlayersAsync()
+        {
+            // given
+            List<Player> randomPlayers = await PostRandomPlayersAsync();
+            List<Player> expectedPlayers = randomPlayers;
+
+            // when
+            List<Player> actualPlayers = await this.apiBroker.GetAllPlayersAsync();
+
+            // then
+            foreach (Player expectedPlayer in expectedPlayers)
+            {
+                Player actualPlayer = actualPlayers.Single(approval => approval.Id == expectedPlayer.Id);
+                actualPlayer.Should().BeEquivalentTo(expectedPlayer);
+                await this.apiBroker.DeletePlayerByIdAsync(actualPlayer.Id);
+            }
         }
     }
 }

@@ -4,6 +4,8 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Brokers;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Players;
 using Tynamix.ObjectFiller;
@@ -18,6 +20,30 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Players
 
         public PlayersApiTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
+
+        private int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private async ValueTask<Player> PostRandomPlayerAsync()
+        {
+            Player randomPlayer = CreateRandomPlayer();
+            await this.apiBroker.PostPlayerAsync(randomPlayer);
+
+            return randomPlayer;
+        }
+
+        private async ValueTask<List<Player>> PostRandomPlayersAsync()
+        {
+            int randomNumber = GetRandomNumber();
+            var randomPlayers = new List<Player>();
+
+            for (int i = 0; i < randomNumber; i++)
+            {
+                randomPlayers.Add(await PostRandomPlayerAsync());
+            }
+
+            return randomPlayers;
+        }
 
         private static Player CreateRandomPlayer() =>
             CreateRandomPlayerFiller().Create();
