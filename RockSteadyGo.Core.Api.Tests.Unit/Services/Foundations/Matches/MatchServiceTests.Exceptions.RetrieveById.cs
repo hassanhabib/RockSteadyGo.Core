@@ -58,5 +58,48 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedMatchServiceException =
+                new FailedMatchServiceException(serviceException);
+
+            var expectedMatchServiceException =
+                new MatchServiceException(failedMatchServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMatchByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Match> retrieveMatchByIdTask =
+                this.matchService.RetrieveMatchByIdAsync(someId);
+
+            MatchServiceException actualMatchServiceException =
+                await Assert.ThrowsAsync<MatchServiceException>(
+                    retrieveMatchByIdTask.AsTask);
+
+            // then
+            actualMatchServiceException.Should()
+                .BeEquivalentTo(expectedMatchServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMatchByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogError(It.Is(SameExceptionAs(
+                   expectedMatchServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
