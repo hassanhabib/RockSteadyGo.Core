@@ -33,7 +33,7 @@ namespace RockSteadyGo.Core.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Match");
+                    b.ToTable("Matches");
 
                     b.HasData(
                         new
@@ -70,7 +70,7 @@ namespace RockSteadyGo.Core.Api.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Player");
+                    b.ToTable("Players");
 
                     b.HasData(
                         new
