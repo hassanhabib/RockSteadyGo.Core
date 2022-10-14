@@ -97,7 +97,8 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Players
             var filler = new Filler<Player>();
 
             filler.Setup()
-                .OnType<DateTimeOffset>().Use(dateTimeOffset);
+                .OnType<DateTimeOffset>().Use(dateTimeOffset)
+                .OnProperty(match => match.Moves).IgnoreIt();
 
             return filler;
         }
