@@ -52,5 +52,19 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
 
                 return maybeMatch;
             });
+
+        public ValueTask<Match> ModifyMatchAsync(Match match) =>
+            TryCatch(async () =>
+            {
+                ValidateMatchOnModify(match);
+
+                Match maybeMatch =
+                    await this.storageBroker.SelectMatchByIdAsync(match.Id);
+
+                ValidateStorageMatch(maybeMatch, match.Id);
+                ValidateAgainstStorageMatchOnModify(inputMatch: match, storageMatch: maybeMatch);
+
+                return await this.storageBroker.UpdateMatchAsync(match);
+            });
     }
 }

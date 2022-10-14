@@ -76,6 +76,15 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
                     .AsQueryable();
         }
 
+        private static Match CreateRandomModifyMatch(Guid id, DateTimeOffset createdDate, DateTimeOffset updatedDate)
+        {
+            Match randomMatch = CreateRandomMatch(updatedDate);
+            randomMatch.Id = id;
+            randomMatch.CreatedDate = createdDate;
+
+            return randomMatch;
+        }
+
         private static Match CreateRandomMatch() =>
             CreateMatchFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
 
