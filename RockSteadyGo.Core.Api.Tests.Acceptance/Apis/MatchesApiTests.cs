@@ -35,9 +35,7 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Matches
             filler.Setup()
                 .OnProperty(match => match.Id).Use(inputMatch.Id)
                 .OnType<DateTimeOffset>().Use(GetRandomDateTime())
-                .OnProperty(match => match.CreatedDate).Use(inputMatch.CreatedDate)
-                .OnProperty(match => match.CreatedByUserId).Use(inputMatch.CreatedByUserId)
-                .OnProperty(match => match.UpdatedDate).Use(now);
+                .OnProperty(match => match.CreatedDate).Use(inputMatch.CreatedDate);
 
             return filler.Create();
         }
