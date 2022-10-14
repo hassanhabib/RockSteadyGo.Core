@@ -12,6 +12,7 @@ using RockSteadyGo.Core.Api.Brokers.Storages;
 using RockSteadyGo.Core.Api.Services.Foundations.Matches;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 using Match = RockSteadyGo.Core.Api.Models.Matches.Match;
 
 namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
@@ -37,6 +38,24 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
+
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
+        }
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
