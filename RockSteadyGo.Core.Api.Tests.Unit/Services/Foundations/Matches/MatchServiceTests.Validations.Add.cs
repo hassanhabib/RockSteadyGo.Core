@@ -47,5 +47,55 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfMatchIsInvalidAndLogItAsync()
+        {
+            // given
+            var invalidMatch = new Match();
+
+            var invalidMatchException =
+                new InvalidMatchException();
+
+            invalidMatchException.AddData(
+                key: nameof(Match.Id),
+                values: "Id is required");
+
+            invalidMatchException.AddData(
+                key: nameof(Match.CreatedDate),
+                values: "Date is required");
+
+            var expectedMatchValidationException =
+                new MatchValidationException(invalidMatchException);
+
+            // when
+            ValueTask<Match> addMatchTask =
+                this.matchService.AddMatchAsync(invalidMatch);
+
+            MatchValidationException actualMatchValidationException =
+                await Assert.ThrowsAsync<MatchValidationException>(() =>
+                    addMatchTask.AsTask());
+
+            // then
+            actualMatchValidationException.Should()
+                .BeEquivalentTo(expectedMatchValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Never());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMatchValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertMatchAsync(It.IsAny<Match>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
