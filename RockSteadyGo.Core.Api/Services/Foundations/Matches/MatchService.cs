@@ -52,5 +52,8 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
 
                 return maybeMatch;
             });
+
+        public ValueTask<Match> ModifyMatchAsync(Match match) =>
+            throw new NotImplementedException();
     }
 }
