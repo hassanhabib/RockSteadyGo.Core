@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using RESTFulSense.Exceptions;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Players;
 using Xunit;
 
@@ -76,6 +77,28 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Players
             // then
             actualPlayer.Should().BeEquivalentTo(modifiedPlayer);
             await this.apiBroker.DeletePlayerByIdAsync(actualPlayer.Id);
+        }
+
+        [Fact]
+        public async Task ShouldDeletePlayerAsync()
+        {
+            // given
+            Player randomPlayer = await PostRandomPlayerAsync();
+            Player inputPlayer = randomPlayer;
+            Player expectedPlayer = inputPlayer;
+
+            // when
+            Player deletedPlayer =
+                await this.apiBroker.DeletePlayerByIdAsync(inputPlayer.Id);
+
+            ValueTask<Player> getPlayerbyIdTask =
+                this.apiBroker.GetPlayerByIdAsync(inputPlayer.Id);
+
+            // then
+            deletedPlayer.Should().BeEquivalentTo(expectedPlayer);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+                getPlayerbyIdTask.AsTask());
         }
     }
 }

@@ -34,8 +34,8 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Players
 
             filler.Setup()
                 .OnProperty(player => player.Id).Use(inputPlayer.Id)
-                .OnType<DateTimeOffset>().Use(GetRandomDateTime())
-                .OnProperty(player => player.CreatedDate).Use(inputPlayer.CreatedDate);
+                .OnProperty(player => player.CreatedDate).Use(inputPlayer.CreatedDate)
+                .OnType<DateTimeOffset>().Use(GetRandomDateTime());
 
             return filler.Create();
         }
