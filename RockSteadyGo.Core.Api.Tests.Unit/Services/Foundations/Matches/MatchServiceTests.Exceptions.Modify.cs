@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using Moq;
 using RockSteadyGo.Core.Api.Models.Matches.Exceptions;
 using Xunit;
@@ -110,6 +111,57 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Matches
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateMatchAsync(someMatch),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyExceptionOnModifyIfDatabaseUpdateExceptionOccursAndLogItAsync()
+        {
+            // given
+            Match randomMatch = CreateRandomMatch();
+            var databaseUpdateException = new DbUpdateException();
+
+            var failedMatchStorageException =
+                new FailedMatchStorageException(databaseUpdateException);
+
+            var expectedMatchDependencyException =
+                new MatchDependencyException(failedMatchStorageException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMatchByIdAsync(randomMatch.Id))
+                    .Throws(databaseUpdateException);
+
+            // when
+            ValueTask<Match> modifyMatchTask =
+                this.matchService.ModifyMatchAsync(randomMatch);
+
+            MatchDependencyException actualMatchDependencyException =
+                await Assert.ThrowsAsync<MatchDependencyException>(
+                    modifyMatchTask.AsTask);
+
+            // then
+            actualMatchDependencyException.Should()
+                .BeEquivalentTo(expectedMatchDependencyException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMatchByIdAsync(randomMatch.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMatchDependencyException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateMatchAsync(randomMatch),
                     Times.Never);
 
             this.dateTimeBrokerMock.Verify(broker =>
