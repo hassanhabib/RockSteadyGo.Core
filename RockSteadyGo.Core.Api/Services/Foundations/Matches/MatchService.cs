@@ -40,7 +40,7 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Matches
         public IQueryable<Match> RetrieveAllMatches() =>
             TryCatch(() => this.storageBroker.SelectAllMatches());
 
-        public ValueTask<Match> RetrieveMatchByIdAsync(Guid matchId) =>
-            throw new NotImplementedException();
+        public async ValueTask<Match> RetrieveMatchByIdAsync(Guid matchId) =>
+            await this.storageBroker.SelectMatchByIdAsync(matchId);
     }
 }
