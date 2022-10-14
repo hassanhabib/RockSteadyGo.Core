@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Brokers;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Matches;
 using Tynamix.ObjectFiller;
@@ -13,6 +15,30 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Matches
 
         public MatchesApiTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
+
+        private int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private async ValueTask<Match> PostRandomMatchAsync()
+        {
+            Match randomMatch = CreateRandomMatch();
+            await this.apiBroker.PostMatchAsync(randomMatch);
+
+            return randomMatch;
+        }
+
+        private async ValueTask<List<Match>> PostRandomMatchesAsync()
+        {
+            int randomNumber = GetRandomNumber();
+            var randomMatches = new List<Match>();
+
+            for (int i = 0; i < randomNumber; i++)
+            {
+                randomMatches.Add(await PostRandomMatchAsync());
+            }
+
+            return randomMatches;
+        }
 
         private static Match CreateRandomMatch() =>
             CreateRandomMatchFiller().Create();
