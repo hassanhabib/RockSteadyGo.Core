@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -39,6 +40,26 @@ namespace RockSteadyGo.Core.Api.Controllers
                when (playerDependencyValidationException.InnerException is AlreadyExistsPlayerException)
             {
                 return Conflict(playerDependencyValidationException.InnerException);
+            }
+            catch (PlayerDependencyException playerDependencyException)
+            {
+                return InternalServerError(playerDependencyException);
+            }
+            catch (PlayerServiceException playerServiceException)
+            {
+                return InternalServerError(playerServiceException);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<Player>> GetAllPlayers()
+        {
+            try
+            {
+                IQueryable<Player> retrievedPlayers =
+                    this.playerService.RetrieveAllPlayers();
+
+                return Ok(retrievedPlayers);
             }
             catch (PlayerDependencyException playerDependencyException)
             {
