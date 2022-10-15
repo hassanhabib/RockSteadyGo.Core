@@ -33,6 +33,9 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             }
         }
 
+        public void ValidateMoveId(Guid moveId) =>
+            Validate((Rule: IsInvalid(moveId), Parameter: nameof(Move.Id)));
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
