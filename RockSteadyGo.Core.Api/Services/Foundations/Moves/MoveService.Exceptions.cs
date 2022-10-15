@@ -6,6 +6,7 @@
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using RockSteadyGo.Core.Api.Models.Moves;
 using RockSteadyGo.Core.Api.Models.Moves.Exceptions;
 using Xeptions;
@@ -51,6 +52,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
 
                 throw CreateAndLogDependencyValidationException(invalidMoveReferenceException);
             }
+            catch (DbUpdateException databaseUpdateException)
+            {
+                var failedMoveStorageException =
+                    new FailedMoveStorageException(databaseUpdateException);
+
+                throw CreateAndLogDependencyException(failedMoveStorageException);
+            }
         }
 
         private MoveValidationException CreateAndLogValidationException(Xeption exception)
@@ -79,6 +87,15 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             this.loggingBroker.LogError(moveDependencyValidationException);
 
             return moveDependencyValidationException;
+        }
+
+        private MoveDependencyException CreateAndLogDependencyException(
+            Xeption exception)
+        {
+            var moveDependencyException = new MoveDependencyException(exception);
+            this.loggingBroker.LogError(moveDependencyException);
+
+            return moveDependencyException;
         }
     }
 }
