@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Brokers;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Moves;
 using Tynamix.ObjectFiller;
@@ -13,6 +15,30 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
 
         public MovesApiTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
+
+        private int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private async ValueTask<Move> PostRandomMoveAsync()
+        {
+            Move randomMove = CreateRandomMove();
+            await this.apiBroker.PostMoveAsync(randomMove);
+
+            return randomMove;
+        }
+
+        private async ValueTask<List<Move>> PostRandomMovesAsync()
+        {
+            int randomNumber = GetRandomNumber();
+            var randomMoves = new List<Move>();
+
+            for (int i = 0; i < randomNumber; i++)
+            {
+                randomMoves.Add(await PostRandomMoveAsync());
+            }
+
+            return randomMoves;
+        }
 
         private static Move CreateRandomMove() =>
             CreateRandomMoveFiller().Create();
