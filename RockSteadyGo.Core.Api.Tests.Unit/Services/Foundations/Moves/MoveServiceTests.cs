@@ -13,6 +13,7 @@ using RockSteadyGo.Core.Api.Models.Moves;
 using RockSteadyGo.Core.Api.Services.Foundations.Moves;
 using Tynamix.ObjectFiller;
 using Xeptions;
+using Xunit;
 
 namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
 {
@@ -37,6 +38,24 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
 
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
+
+        public static TheoryData MinutesBeforeOrAfter()
+        {
+            int randomNumber = GetRandomNumber();
+            int randomNegativeNumber = GetRandomNegativeNumber();
+
+            return new TheoryData<int>
+            {
+                randomNumber,
+                randomNegativeNumber
+            };
+        }
+
+        private static int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private static int GetRandomNegativeNumber() =>
+            -1 * new IntRange(min: 2, max: 10).GetValue();
 
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
