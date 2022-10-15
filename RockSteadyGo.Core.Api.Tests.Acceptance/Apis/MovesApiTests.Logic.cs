@@ -67,7 +67,9 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
         public async Task ShouldGetMoveAsync()
         {
             // given
-            Move randomMove = await PostRandomMoveAsync();
+            Match randomMatch = await PostRandomMatchAsync();
+            Player randomPlayer = await PostRandomPlayerAsync();
+            Move randomMove = await PostRandomMoveAsync(randomMatch.Id, randomPlayer.Id);
             Move expectedMove = randomMove;
 
             // when
@@ -76,6 +78,8 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
             // then
             actualMove.Should().BeEquivalentTo(expectedMove);
             await this.apiBroker.DeleteMoveByIdAsync(actualMove.Id);
+            await this.apiBroker.DeletePlayerByIdAsync(randomPlayer.Id);
+            await this.apiBroker.DeleteMatchByIdAsync(randomMatch.Id);
         }
     }
 }
