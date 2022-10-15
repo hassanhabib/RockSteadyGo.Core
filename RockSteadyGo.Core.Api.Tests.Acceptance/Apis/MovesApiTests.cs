@@ -19,6 +19,24 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
         private int GetRandomNumber() =>
             new IntRange(min: 2, max: 10).GetValue();
 
+        private static DateTimeOffset GetRandomDateTime() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
+        private static Move UpdateMoveWithRandomValues(Move inputMove)
+        {
+            DateTimeOffset now = DateTimeOffset.UtcNow;
+            var filler = new Filler<Move>();
+
+            filler.Setup()
+                .OnProperty(move => move.Id).Use(inputMove.Id)
+                .OnType<DateTimeOffset>().Use(GetRandomDateTime())
+                .OnProperty(move => move.CreatedDate).Use(inputMove.CreatedDate)
+                .OnProperty(move => move.CreatedByUserId).Use(inputMove.CreatedByUserId)
+                .OnProperty(move => move.UpdatedDate).Use(now);
+
+            return filler.Create();
+        }
+
         private async ValueTask<Move> PostRandomMoveAsync()
         {
             Move randomMove = CreateRandomMove();
