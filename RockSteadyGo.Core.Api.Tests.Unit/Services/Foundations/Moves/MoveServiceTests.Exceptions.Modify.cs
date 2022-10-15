@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using FluentAssertions;
@@ -217,6 +218,57 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
 
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnModifyIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Move randomMove = CreateRandomMove();
+            var serviceException = new Exception();
+
+            var failedMoveServiceException =
+                new FailedMoveServiceException(serviceException);
+
+            var expectedMoveServiceException =
+                new MoveServiceException(failedMoveServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMoveByIdAsync(randomMove.Id))
+                    .Throws(serviceException);
+
+            // when
+            ValueTask<Move> modifyMoveTask =
+                this.moveService.ModifyMoveAsync(randomMove);
+
+            MoveServiceException actualMoveServiceException =
+                await Assert.ThrowsAsync<MoveServiceException>(
+                    modifyMoveTask.AsTask);
+
+            // then
+            actualMoveServiceException.Should()
+                .BeEquivalentTo(expectedMoveServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMoveByIdAsync(randomMove.Id),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMoveByIdAsync(randomMove.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMoveServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateMoveAsync(randomMove),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
