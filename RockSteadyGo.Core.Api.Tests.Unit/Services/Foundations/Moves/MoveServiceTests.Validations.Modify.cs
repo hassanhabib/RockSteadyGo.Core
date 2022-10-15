@@ -81,11 +81,11 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
 
             invalidMoveException.AddData(
                 key: nameof(Move.LocationX),
-                values: "Value is required");
+                values: "Invalid value");
 
             invalidMoveException.AddData(
                 key: nameof(Move.LocationY),
-                values: "Value is required");
+                values: "Invalid value");
 
             invalidMoveException.AddData(
                 key: nameof(Move.CreatedDate),
@@ -106,10 +106,6 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             actualMoveValidationException.Should()
                 .BeEquivalentTo(expectedMoveValidationException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
-
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedMoveValidationException))),
@@ -117,6 +113,10 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateMoveAsync(It.IsAny<Move>()),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
                     Times.Never);
 
             this.loggingBrokerMock.VerifyNoOtherCalls();

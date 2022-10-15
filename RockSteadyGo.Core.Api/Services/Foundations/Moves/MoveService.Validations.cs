@@ -28,6 +28,14 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
         private void ValidateMoveOnModify(Move move)
         {
             ValidateMoveIsNotNull(move);
+
+            Validate(
+                (Rule: IsInvalid(move.Id), Parameter: nameof(Move.Id)),
+                (Rule: IsInvalid(move.MatchId), Parameter: nameof(Move.MatchId)),
+                (Rule: IsInvalid(move.PlayerId), Parameter: nameof(Move.PlayerId)),
+                (Rule: IsInvalid(move.LocationX, 0, 2), Parameter: nameof(Move.LocationX)),
+                (Rule: IsInvalid(move.LocationY, 0, 2), Parameter: nameof(Move.LocationY)),
+                (Rule: IsInvalid(move.CreatedDate), Parameter: nameof(Move.CreatedDate)));
         }
 
         private static void ValidateMoveIsNotNull(Move move)
