@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
@@ -122,6 +123,59 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfMoveDoesNotExistAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Move randomMove = CreateRandomMove(randomDateTimeOffset);
+            Move nonExistMove = randomMove;
+            Move nullMove = null;
+
+            var notFoundMoveException =
+                new NotFoundMoveException(nonExistMove.Id);
+
+            var expectedMoveValidationException =
+                new MoveValidationException(notFoundMoveException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMoveByIdAsync(nonExistMove.Id))
+                .ReturnsAsync(nullMove);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                .Returns(randomDateTimeOffset);
+
+            // when 
+            ValueTask<Move> modifyMoveTask =
+                this.moveService.ModifyMoveAsync(nonExistMove);
+
+            MoveValidationException actualMoveValidationException =
+                await Assert.ThrowsAsync<MoveValidationException>(
+                    modifyMoveTask.AsTask);
+
+            // then
+            actualMoveValidationException.Should()
+                .BeEquivalentTo(expectedMoveValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMoveByIdAsync(nonExistMove.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMoveValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }
