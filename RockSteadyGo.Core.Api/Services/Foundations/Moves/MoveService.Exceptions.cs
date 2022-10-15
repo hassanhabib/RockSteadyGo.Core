@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using Microsoft.Data.SqlClient;
 using RockSteadyGo.Core.Api.Models.Moves;
 using RockSteadyGo.Core.Api.Models.Moves.Exceptions;
 using Xeptions;
@@ -28,6 +29,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             {
                 throw CreateAndLogValidationException(invalidMoveException);
             }
+            catch (SqlException sqlException)
+            {
+                var failedMoveStorageException =
+                    new FailedMoveStorageException(sqlException);
+
+                throw CreateAndLogCriticalDependencyException(failedMoveStorageException);
+            }
         }
 
         private MoveValidationException CreateAndLogValidationException(Xeption exception)
@@ -38,6 +46,14 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             this.loggingBroker.LogError(moveValidationException);
 
             return moveValidationException;
+        }
+
+        private MoveDependencyException CreateAndLogCriticalDependencyException(Xeption exception)
+        {
+            var moveDependencyException = new MoveDependencyException(exception);
+            this.loggingBroker.LogCritical(moveDependencyException);
+
+            return moveDependencyException;
         }
     }
 }

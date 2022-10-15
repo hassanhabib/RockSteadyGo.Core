@@ -101,6 +101,10 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             actualMoveValidationException.Should()
                 .BeEquivalentTo(expectedMoveValidationException);
 
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogError(It.Is(SameExceptionAs(
                     expectedMoveValidationException))),
@@ -109,10 +113,6 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertMoveAsync(It.IsAny<Move>()),
                     Times.Never);
-
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Never());
 
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
