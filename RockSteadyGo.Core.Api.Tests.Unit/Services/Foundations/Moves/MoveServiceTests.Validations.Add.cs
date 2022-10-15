@@ -7,6 +7,7 @@ using System;
 using System.Threading.Tasks;
 using FluentAssertions;
 using Moq;
+using RockSteadyGo.Core.Api.Models.Matches.Exceptions;
 using RockSteadyGo.Core.Api.Models.Moves;
 using RockSteadyGo.Core.Api.Models.Moves.Exceptions;
 using Xunit;
@@ -122,7 +123,7 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
         [Theory]
         [MemberData(nameof(MinutesBeforeOrAfter))]
         public async Task ShouldThrowValidationExceptionOnAddIfCreatedDateIsNotRecentAndLogItAsync(
-    int minutesBeforeOrAfter)
+            int minutesBeforeOrAfter)
         {
             // given
             DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
@@ -175,6 +176,59 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnAddIfMatchDoesNotExistAndLogItAsync()
+        {
+            // given
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Match randomMatch = CreateRandomModifyMatch(randomDateTimeOffset);
+            Match nonExistMatch = randomMatch;
+            Match nullMatch = null;
+
+            var notFoundMatchException =
+                new NotFoundMatchException(nonExistMatch.Id);
+
+            var expectedMatchValidationException =
+                new MatchValidationException(notFoundMatchException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMatchByIdAsync(nonExistMatch.Id))
+                .ReturnsAsync(nullMatch);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                .Returns(randomDateTimeOffset);
+
+            // when 
+            ValueTask<Match> modifyMatchTask =
+                this.matchService.ModifyMatchAsync(nonExistMatch);
+
+            MatchValidationException actualMatchValidationException =
+                await Assert.ThrowsAsync<MatchValidationException>(
+                    modifyMatchTask.AsTask);
+
+            // then
+            actualMatchValidationException.Should()
+                .BeEquivalentTo(expectedMatchValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMatchByIdAsync(nonExistMatch.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMatchValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
         }
     }
 }

@@ -21,7 +21,8 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
                 (Rule: IsInvalid(move.PlayerId), Parameter: nameof(Move.PlayerId)),
                 (Rule: IsInvalid(move.LocationX, 0, 2), Parameter: nameof(Move.LocationX)),
                 (Rule: IsInvalid(move.LocationY, 0, 2), Parameter: nameof(Move.LocationY)),
-                (Rule: IsInvalid(move.CreatedDate), Parameter: nameof(Move.CreatedDate)));
+                (Rule: IsInvalid(move.CreatedDate), Parameter: nameof(Move.CreatedDate)),
+                (Rule: IsNotRecent(move.CreatedDate), Parameter: nameof(Move.CreatedDate)));
         }
 
         private static void ValidateMoveIsNotNull(Move move)
@@ -49,6 +50,20 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             Condition = value < rangeStart || value > rangeEnd,
             Message = "Invalid value"
         };
+
+        private dynamic IsNotRecent(DateTimeOffset date) => new
+        {
+            Condition = IsDateNotRecent(date),
+            Message = "Date is not recent"
+        };
+
+        private bool IsDateNotRecent(DateTimeOffset date)
+        {
+            DateTimeOffset currentDateTime = this.dateTimeBroker.GetCurrentDateTimeOffset();
+            TimeSpan timeDifference = currentDateTime.Subtract(date);
+
+            return timeDifference.TotalSeconds is > 60 or < 0;
+        }
 
         private static void Validate(params (dynamic Rule, string Parameter)[] validations)
         {
