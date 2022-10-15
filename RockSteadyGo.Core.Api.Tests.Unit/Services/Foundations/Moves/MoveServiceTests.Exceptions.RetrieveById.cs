@@ -58,5 +58,48 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowServiceExceptionOnRetrieveByIdIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            Guid someId = Guid.NewGuid();
+            var serviceException = new Exception();
+
+            var failedMoveServiceException =
+                new FailedMoveServiceException(serviceException);
+
+            var expectedMoveServiceException =
+                new MoveServiceException(failedMoveServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMoveByIdAsync(It.IsAny<Guid>()))
+                    .ThrowsAsync(serviceException);
+
+            // when
+            ValueTask<Move> retrieveMoveByIdTask =
+                this.moveService.RetrieveMoveByIdAsync(someId);
+
+            MoveServiceException actualMoveServiceException =
+                await Assert.ThrowsAsync<MoveServiceException>(
+                    retrieveMoveByIdTask.AsTask);
+
+            // then
+            actualMoveServiceException.Should()
+                .BeEquivalentTo(expectedMoveServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMoveByIdAsync(It.IsAny<Guid>()),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogError(It.Is(SameExceptionAs(
+                   expectedMoveServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
