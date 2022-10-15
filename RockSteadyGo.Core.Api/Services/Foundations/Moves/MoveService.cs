@@ -52,5 +52,19 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
 
                 return maybeMove;
             });
+
+        public ValueTask<Move> ModifyMoveAsync(Move move) =>
+            TryCatch(async () =>
+            {
+                ValidateMoveOnModify(move);
+
+                Move maybeMove =
+                    await this.storageBroker.SelectMoveByIdAsync(move.Id);
+
+                ValidateStorageMove(maybeMove, move.Id);
+                ValidateAgainstStorageMoveOnModify(inputMove: move, storageMove: maybeMove);
+
+                return await this.storageBroker.UpdateMoveAsync(move);
+            });
     }
 }

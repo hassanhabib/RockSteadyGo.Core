@@ -25,6 +25,19 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
                 (Rule: IsNotRecent(move.CreatedDate), Parameter: nameof(Move.CreatedDate)));
         }
 
+        private void ValidateMoveOnModify(Move move)
+        {
+            ValidateMoveIsNotNull(move);
+
+            Validate(
+                (Rule: IsInvalid(move.Id), Parameter: nameof(Move.Id)),
+                (Rule: IsInvalid(move.MatchId), Parameter: nameof(Move.MatchId)),
+                (Rule: IsInvalid(move.PlayerId), Parameter: nameof(Move.PlayerId)),
+                (Rule: IsInvalid(move.LocationX, 0, 2), Parameter: nameof(Move.LocationX)),
+                (Rule: IsInvalid(move.LocationY, 0, 2), Parameter: nameof(Move.LocationY)),
+                (Rule: IsInvalid(move.CreatedDate), Parameter: nameof(Move.CreatedDate)));
+        }
+
         private static void ValidateMoveIsNotNull(Move move)
         {
             if (move is null)
@@ -42,6 +55,16 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             {
                 throw new NotFoundMoveException(moveId);
             }
+        }
+
+        private static void ValidateAgainstStorageMoveOnModify(Move inputMove, Move storageMove)
+        {
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputMove.CreatedDate,
+                    secondDate: storageMove.CreatedDate,
+                    secondDateName: nameof(Move.CreatedDate)),
+                Parameter: nameof(Move.CreatedDate)));
         }
 
         private static dynamic IsInvalid(Guid id) => new
@@ -67,6 +90,15 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             Condition = IsDateNotRecent(date),
             Message = "Date is not recent"
         };
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
 
         private bool IsDateNotRecent(DateTimeOffset date)
         {

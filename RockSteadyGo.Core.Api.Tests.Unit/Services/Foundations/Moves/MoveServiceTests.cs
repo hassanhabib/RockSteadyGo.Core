@@ -79,6 +79,15 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
                     .AsQueryable();
         }
 
+        private static Move CreateRandomModifyMove(Guid id, DateTimeOffset createdDate, DateTimeOffset updatedDate)
+        {
+            Move randomMove = CreateRandomMove(updatedDate);
+            randomMove.Id = id;
+            randomMove.CreatedDate = createdDate;
+
+            return randomMove;
+        }
+
         private static Move CreateRandomMove() =>
             CreateMoveFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
 
