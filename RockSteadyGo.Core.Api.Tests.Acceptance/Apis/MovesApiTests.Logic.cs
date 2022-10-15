@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using RESTFulSense.Exceptions;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Matches;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Moves;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Players;
@@ -106,7 +107,9 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
         public async Task ShouldDeleteMoveAsync()
         {
             // given
-            Move randomMove = await PostRandomMoveAsync();
+            Match randomMatch = await PostRandomMatchAsync();
+            Player randomPlayer = await PostRandomPlayerAsync();
+            Move randomMove = await PostRandomMoveAsync(randomMatch.Id, randomPlayer.Id);
             Move inputMove = randomMove;
             Move expectedMove = inputMove;
 
@@ -122,6 +125,9 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
 
             await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
                 getMovebyIdTask.AsTask());
+
+            await this.apiBroker.DeletePlayerByIdAsync(randomPlayer.Id);
+            await this.apiBroker.DeleteMatchByIdAsync(randomMatch.Id);
         }
     }
 }
