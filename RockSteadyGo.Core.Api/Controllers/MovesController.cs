@@ -1,5 +1,12 @@
+// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using RESTFulSense.Controllers;
 using RockSteadyGo.Core.Api.Models.Moves;
 using RockSteadyGo.Core.Api.Models.Moves.Exceptions;
@@ -39,6 +46,27 @@ namespace RockSteadyGo.Core.Api.Controllers
                when (moveDependencyValidationException.InnerException is AlreadyExistsMoveException)
             {
                 return Conflict(moveDependencyValidationException.InnerException);
+            }
+            catch (MoveDependencyException moveDependencyException)
+            {
+                return InternalServerError(moveDependencyException);
+            }
+            catch (MoveServiceException moveServiceException)
+            {
+                return InternalServerError(moveServiceException);
+            }
+        }
+
+        [HttpGet]
+        [EnableQuery]
+        public ActionResult<IQueryable<Move>> GetAllMoves()
+        {
+            try
+            {
+                IQueryable<Move> retrievedMoves =
+                    this.moveService.RetrieveAllMoves();
+
+                return Ok(retrievedMoves);
             }
             catch (MoveDependencyException moveDependencyException)
             {
