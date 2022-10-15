@@ -42,13 +42,13 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             // then
             actualMove.Should().BeEquivalentTo(expectedMove);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once());
-
             this.storageBrokerMock.Verify(broker =>
                 broker.InsertMoveAsync(inputMove),
                     Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Never());
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
             this.storageBrokerMock.VerifyNoOtherCalls();

@@ -3,7 +3,6 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
-using System;
 using System.Threading.Tasks;
 using RockSteadyGo.Core.Api.Brokers.DateTimes;
 using RockSteadyGo.Core.Api.Brokers.Loggings;
@@ -28,7 +27,7 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             this.loggingBroker = loggingBroker;
         }
 
-        public ValueTask<Move> AddMoveAsync(Move move) =>
-            throw new NotImplementedException();
+        public async ValueTask<Move> AddMoveAsync(Move move) =>
+            await this.storageBroker.InsertMoveAsync(move);
     }
 }
