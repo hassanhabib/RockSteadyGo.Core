@@ -1,6 +1,12 @@
+// ---------------------------------------------------------------
+// Copyright (c) Coalition of the Good-Hearted Engineers
+// FREE TO USE TO CONNECT THE WORLD
+// ---------------------------------------------------------------
+
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.OData.Query;
 using RESTFulSense.Controllers;
 using RockSteadyGo.Core.Api.Models.Moves;
 using RockSteadyGo.Core.Api.Models.Moves.Exceptions;
@@ -52,6 +58,7 @@ namespace RockSteadyGo.Core.Api.Controllers
         }
 
         [HttpGet]
+        [EnableQuery]
         public ActionResult<IQueryable<Move>> GetAllMoves()
         {
             try
