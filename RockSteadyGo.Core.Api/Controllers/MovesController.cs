@@ -99,5 +99,44 @@ namespace RockSteadyGo.Core.Api.Controllers
                 return InternalServerError(moveServiceException);
             }
         }
+
+        [HttpPut]
+        public async ValueTask<ActionResult<Move>> PutMoveAsync(Move move)
+        {
+            try
+            {
+                Move modifiedMove =
+                    await this.moveService.ModifyMoveAsync(move);
+
+                return Ok(modifiedMove);
+            }
+            catch (MoveValidationException moveValidationException)
+                when (moveValidationException.InnerException is NotFoundMoveException)
+            {
+                return NotFound(moveValidationException.InnerException);
+            }
+            catch (MoveValidationException moveValidationException)
+            {
+                return BadRequest(moveValidationException.InnerException);
+            }
+            catch (MoveDependencyValidationException moveValidationException)
+                when (moveValidationException.InnerException is InvalidMoveReferenceException)
+            {
+                return FailedDependency(moveValidationException.InnerException);
+            }
+            catch (MoveDependencyValidationException moveDependencyValidationException)
+               when (moveDependencyValidationException.InnerException is AlreadyExistsMoveException)
+            {
+                return Conflict(moveDependencyValidationException.InnerException);
+            }
+            catch (MoveDependencyException moveDependencyException)
+            {
+                return InternalServerError(moveDependencyException);
+            }
+            catch (MoveServiceException moveServiceException)
+            {
+                return InternalServerError(moveServiceException);
+            }
+        }
     }
 }
