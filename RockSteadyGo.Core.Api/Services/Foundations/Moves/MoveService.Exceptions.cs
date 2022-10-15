@@ -44,6 +44,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
 
                 throw CreateAndLogDependencyValidationException(alreadyExistsMoveException);
             }
+            catch (ForeignKeyConstraintConflictException foreignKeyConstraintConflictException)
+            {
+                var invalidMoveReferenceException =
+                    new InvalidMoveReferenceException(foreignKeyConstraintConflictException);
+
+                throw CreateAndLogDependencyValidationException(invalidMoveReferenceException);
+            }
         }
 
         private MoveValidationException CreateAndLogValidationException(Xeption exception)
