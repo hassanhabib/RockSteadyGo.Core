@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -17,6 +18,7 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
     public partial class MoveService
     {
         private delegate ValueTask<Move> ReturningMoveFunction();
+        private delegate IQueryable<Move> ReturningMovesFunction();
 
         private async ValueTask<Move> TryCatch(ReturningMoveFunction returningMoveFunction)
         {
@@ -59,6 +61,27 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
                     new FailedMoveStorageException(databaseUpdateException);
 
                 throw CreateAndLogDependencyException(failedMoveStorageException);
+            }
+            catch (Exception exception)
+            {
+                var failedMoveServiceException =
+                    new FailedMoveServiceException(exception);
+
+                throw CreateAndLogServiceException(failedMoveServiceException);
+            }
+        }
+
+        private IQueryable<Move> TryCatch(ReturningMovesFunction returningMovesFunction)
+        {
+            try
+            {
+                return returningMovesFunction();
+            }
+            catch (SqlException sqlException)
+            {
+                var failedMoveStorageException =
+                    new FailedMoveStorageException(sqlException);
+                throw CreateAndLogCriticalDependencyException(failedMoveStorageException);
             }
             catch (Exception exception)
             {

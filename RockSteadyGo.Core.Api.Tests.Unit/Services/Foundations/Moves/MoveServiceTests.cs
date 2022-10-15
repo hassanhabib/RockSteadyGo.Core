@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Runtime.Serialization;
 using Microsoft.Data.SqlClient;
@@ -70,6 +71,13 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
 
         private static int GetRandomPosition() =>
             new IntRange(min: 0, max: 2).GetValue();
+
+        private static IQueryable<Move> CreateRandomMoves()
+        {
+            return CreateMoveFiller(dateTimeOffset: GetRandomDateTimeOffset())
+                .Create(count: GetRandomNumber())
+                    .AsQueryable();
+        }
 
         private static Move CreateRandomMove() =>
             CreateMoveFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
