@@ -113,5 +113,56 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async void ShouldThrowValidationExceptionOnAddIfReferenceErrorOccursAndLogItAsync()
+        {
+            // given
+            Move someMove = CreateRandomMove();
+            string randomMessage = GetRandomMessage();
+            string exceptionMessage = randomMessage;
+
+            var foreignKeyConstraintConflictException =
+                new ForeignKeyConstraintConflictException(exceptionMessage);
+
+            var invalidMoveReferenceException =
+                new InvalidMoveReferenceException(foreignKeyConstraintConflictException);
+
+            var expectedMoveValidationException =
+                new MoveDependencyValidationException(invalidMoveReferenceException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(foreignKeyConstraintConflictException);
+
+            // when
+            ValueTask<Move> addMoveTask =
+                this.moveService.AddMoveAsync(someMove);
+
+            // then
+            MoveDependencyValidationException actualMoveDependencyValidationException =
+                await Assert.ThrowsAsync<MoveDependencyValidationException>(
+                    addMoveTask.AsTask);
+
+            actualMoveDependencyValidationException.Should()
+                .BeEquivalentTo(expectedMoveValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once());
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMoveValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertMoveAsync(someMove),
+                    Times.Never());
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
