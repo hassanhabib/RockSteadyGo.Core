@@ -46,5 +46,20 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
                 await this.apiBroker.DeleteMoveByIdAsync(actualMove.Id);
             }
         }
+
+        [Fact]
+        public async Task ShouldGetMoveAsync()
+        {
+            // given
+            Move randomMove = await PostRandomMoveAsync();
+            Move expectedMove = randomMove;
+
+            // when
+            Move actualMove = await this.apiBroker.GetMoveByIdAsync(randomMove.Id);
+
+            // then
+            actualMove.Should().BeEquivalentTo(expectedMove);
+            await this.apiBroker.DeleteMoveByIdAsync(actualMove.Id);
+        }
     }
 }
