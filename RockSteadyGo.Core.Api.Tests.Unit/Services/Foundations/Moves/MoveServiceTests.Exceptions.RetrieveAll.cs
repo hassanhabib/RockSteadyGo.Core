@@ -54,5 +54,46 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             this.loggingBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldThrowServiceExceptionOnRetrieveAllIfServiceErrorOccursAndLogItAsync()
+        {
+            // given
+            string exceptionMessage = GetRandomMessage();
+            var serviceException = new Exception(exceptionMessage);
+
+            var failedMoveServiceException =
+                new FailedMoveServiceException(serviceException);
+
+            var expectedMoveServiceException =
+                new MoveServiceException(failedMoveServiceException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectAllMoves())
+                    .Throws(serviceException);
+
+            // when
+            Action retrieveAllMovesAction = () =>
+                this.moveService.RetrieveAllMoves();
+
+            MoveServiceException actualMoveServiceException =
+                Assert.Throws<MoveServiceException>(retrieveAllMovesAction);
+
+            // then
+            actualMoveServiceException.Should()
+                .BeEquivalentTo(expectedMoveServiceException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectAllMoves(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMoveServiceException))),
+                        Times.Once);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }
