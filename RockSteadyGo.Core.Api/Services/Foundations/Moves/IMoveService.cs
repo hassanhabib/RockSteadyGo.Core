@@ -15,5 +15,6 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
         ValueTask<Move> AddMoveAsync(Move move);
         IQueryable<Move> RetrieveAllMoves();
         ValueTask<Move> RetrieveMoveByIdAsync(Guid moveId);
+        ValueTask<Move> ModifyMoveAsync(Move move);
     }
 }

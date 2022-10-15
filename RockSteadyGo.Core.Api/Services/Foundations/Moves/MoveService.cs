@@ -52,5 +52,8 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
 
                 return maybeMove;
             });
+
+        public ValueTask<Move> ModifyMoveAsync(Move move) =>
+            throw new NotImplementedException();
     }
 }
