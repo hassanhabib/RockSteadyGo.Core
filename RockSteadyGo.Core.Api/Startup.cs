@@ -14,6 +14,7 @@ using RockSteadyGo.Core.Api.Brokers.DateTimes;
 using RockSteadyGo.Core.Api.Brokers.Loggings;
 using RockSteadyGo.Core.Api.Brokers.Storages;
 using RockSteadyGo.Core.Api.Services.Foundations.Matches;
+using RockSteadyGo.Core.Api.Services.Foundations.Moves;
 using RockSteadyGo.Core.Api.Services.Foundations.Players;
 
 namespace RockSteadyGo.Core.Api
@@ -63,6 +64,7 @@ namespace RockSteadyGo.Core.Api
         {
             services.AddTransient<IPlayerService, PlayerService>();
             services.AddTransient<IMatchService, MatchService>();
+            services.AddTransient<IMoveService, MoveService>();
         }
 
         private static void AddBrokers(IServiceCollection services)
