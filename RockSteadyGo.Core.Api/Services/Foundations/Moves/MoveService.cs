@@ -37,6 +37,6 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             });
 
         public IQueryable<Move> RetrieveAllMoves() =>
-            this.storageBroker.SelectAllMoves();
+            TryCatch(() => this.storageBroker.SelectAllMoves());
     }
 }
