@@ -172,5 +172,56 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.loggingBrokerMock.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnModifyIfDbUpdateConcurrencyErrorOccursAndLogAsync()
+        {
+            // given
+            Move randomMove = CreateRandomMove();
+            var databaseUpdateConcurrencyException = new DbUpdateConcurrencyException();
+
+            var lockedMoveException =
+                new LockedMoveException(databaseUpdateConcurrencyException);
+
+            var expectedMoveDependencyValidationException =
+                new MoveDependencyValidationException(lockedMoveException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMoveByIdAsync(randomMove.Id))
+                    .Throws(databaseUpdateConcurrencyException);
+
+            // when
+            ValueTask<Move> modifyMoveTask =
+                this.moveService.ModifyMoveAsync(randomMove);
+
+            MoveDependencyValidationException actualMoveDependencyValidationException =
+                await Assert.ThrowsAsync<MoveDependencyValidationException>(
+                    modifyMoveTask.AsTask);
+
+            // then
+            actualMoveDependencyValidationException.Should()
+                .BeEquivalentTo(expectedMoveDependencyValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMoveByIdAsync(randomMove.Id),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMoveDependencyValidationException))),
+                        Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.UpdateMoveAsync(randomMove),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
     }
 }

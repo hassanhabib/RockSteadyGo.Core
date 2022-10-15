@@ -59,6 +59,12 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
 
                 throw CreateAndLogDependencyValidationException(invalidMoveReferenceException);
             }
+            catch (DbUpdateConcurrencyException dbUpdateConcurrencyException)
+            {
+                var lockedMoveException = new LockedMoveException(dbUpdateConcurrencyException);
+
+                throw CreateAndLogDependencyValidationException(lockedMoveException);
+            }
             catch (DbUpdateException databaseUpdateException)
             {
                 var failedMoveStorageException =
