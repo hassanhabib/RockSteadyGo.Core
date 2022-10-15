@@ -138,5 +138,43 @@ namespace RockSteadyGo.Core.Api.Controllers
                 return InternalServerError(moveServiceException);
             }
         }
+
+        [HttpDelete("{moveId}")]
+        public async ValueTask<ActionResult<Move>> DeleteMoveByIdAsync(Guid moveId)
+        {
+            try
+            {
+                Move deletedMove =
+                    await this.moveService.RemoveMoveByIdAsync(moveId);
+
+                return Ok(deletedMove);
+            }
+            catch (MoveValidationException moveValidationException)
+                when (moveValidationException.InnerException is NotFoundMoveException)
+            {
+                return NotFound(moveValidationException.InnerException);
+            }
+            catch (MoveValidationException moveValidationException)
+            {
+                return BadRequest(moveValidationException.InnerException);
+            }
+            catch (MoveDependencyValidationException moveDependencyValidationException)
+                when (moveDependencyValidationException.InnerException is LockedMoveException)
+            {
+                return Locked(moveDependencyValidationException.InnerException);
+            }
+            catch (MoveDependencyValidationException moveDependencyValidationException)
+            {
+                return BadRequest(moveDependencyValidationException);
+            }
+            catch (MoveDependencyException moveDependencyException)
+            {
+                return InternalServerError(moveDependencyException);
+            }
+            catch (MoveServiceException moveServiceException)
+            {
+                return InternalServerError(moveServiceException);
+            }
+        }
     }
 }
