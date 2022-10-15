@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Brokers;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Matches;
@@ -75,6 +76,29 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
 
         private static Move CreateRandomMove(Guid matchId, Guid playerId) =>
             CreateRandomMoveFiller(matchId, playerId).Create();
+        private int GetRandomNumber() =>
+            new IntRange(min: 2, max: 10).GetValue();
+
+        private async ValueTask<Move> PostRandomMoveAsync(Guid matchId, Guid playerId)
+        {
+            Move randomMove = CreateRandomMove(matchId, playerId);
+            await this.apiBroker.PostMoveAsync(randomMove);
+
+            return randomMove;
+        }
+
+        private async ValueTask<List<Move>> PostRandomMovesAsync(Guid matchId, Guid playerId)
+        {
+            int randomNumber = GetRandomNumber();
+            var randomMoves = new List<Move>();
+
+            for (int i = 0; i < randomNumber; i++)
+            {
+                randomMoves.Add(await PostRandomMoveAsync(matchId, playerId));
+            }
+
+            return randomMoves;
+        }
 
         private static Filler<Move> CreateRandomMoveFiller(Guid matchId, Guid playerId)
         {

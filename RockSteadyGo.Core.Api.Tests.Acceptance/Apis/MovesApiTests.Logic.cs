@@ -3,6 +3,8 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Matches;
@@ -33,6 +35,30 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
             // then
             actualMove.Should().BeEquivalentTo(expectedMove);
             await this.apiBroker.DeleteMoveByIdAsync(actualMove.Id);
+            await this.apiBroker.DeletePlayerByIdAsync(randomPlayer.Id);
+            await this.apiBroker.DeleteMatchByIdAsync(randomMatch.Id);
+        }
+
+        [Fact]
+        public async Task ShouldGetAllMovesAsync()
+        {
+            // given
+            Match randomMatch = await PostRandomMatchAsync();
+            Player randomPlayer = await PostRandomPlayerAsync();
+            List<Move> randomMoves = await PostRandomMovesAsync(randomMatch.Id, randomPlayer.Id);
+            List<Move> expectedMoves = randomMoves;
+
+            // when
+            List<Move> actualMoves = await this.apiBroker.GetAllMovesAsync();
+
+            // then
+            foreach (Move expectedMove in expectedMoves)
+            {
+                Move actualMove = actualMoves.Single(approval => approval.Id == expectedMove.Id);
+                actualMove.Should().BeEquivalentTo(expectedMove);
+                await this.apiBroker.DeleteMoveByIdAsync(actualMove.Id);
+            }
+
             await this.apiBroker.DeletePlayerByIdAsync(randomPlayer.Id);
             await this.apiBroker.DeleteMatchByIdAsync(randomMatch.Id);
         }
