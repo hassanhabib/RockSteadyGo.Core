@@ -29,15 +29,11 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Players
 
         private static Player UpdatePlayerWithRandomValues(Player inputPlayer)
         {
-            DateTimeOffset now = DateTimeOffset.UtcNow;
-            var filler = new Filler<Player>();
+            Player randomUpdatedPlayer = CreateRandomPlayer();
+            randomUpdatedPlayer.Id = inputPlayer.Id;
+            randomUpdatedPlayer.CreatedDate = inputPlayer.CreatedDate;
 
-            filler.Setup()
-                .OnProperty(player => player.Id).Use(inputPlayer.Id)
-                .OnProperty(player => player.CreatedDate).Use(inputPlayer.CreatedDate)
-                .OnType<DateTimeOffset>().Use(GetRandomDateTime());
-
-            return filler.Create();
+            return randomUpdatedPlayer;
         }
 
         private async ValueTask<Player> PostRandomPlayerAsync()
