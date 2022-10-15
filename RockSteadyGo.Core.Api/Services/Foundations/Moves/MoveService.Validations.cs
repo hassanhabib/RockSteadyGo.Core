@@ -25,6 +25,11 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
                 (Rule: IsNotRecent(move.CreatedDate), Parameter: nameof(Move.CreatedDate)));
         }
 
+        private void ValidateMoveOnModify(Move move)
+        {
+            ValidateMoveIsNotNull(move);
+        }
+
         private static void ValidateMoveIsNotNull(Move move)
         {
             if (move is null)
