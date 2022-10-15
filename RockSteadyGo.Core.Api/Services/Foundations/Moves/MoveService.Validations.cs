@@ -57,6 +57,16 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             }
         }
 
+        private static void ValidateAgainstStorageMoveOnModify(Move inputMove, Move storageMove)
+        {
+            Validate(
+                (Rule: IsNotSame(
+                    firstDate: inputMove.CreatedDate,
+                    secondDate: storageMove.CreatedDate,
+                    secondDateName: nameof(Move.CreatedDate)),
+                Parameter: nameof(Move.CreatedDate)));
+        }
+
         private static dynamic IsInvalid(Guid id) => new
         {
             Condition = id == Guid.Empty,
@@ -80,6 +90,15 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             Condition = IsDateNotRecent(date),
             Message = "Date is not recent"
         };
+
+        private static dynamic IsNotSame(
+            DateTimeOffset firstDate,
+            DateTimeOffset secondDate,
+            string secondDateName) => new
+            {
+                Condition = firstDate != secondDate,
+                Message = $"Date is not the same as {secondDateName}"
+            };
 
         private bool IsDateNotRecent(DateTimeOffset date)
         {

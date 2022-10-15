@@ -62,6 +62,7 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
                     await this.storageBroker.SelectMoveByIdAsync(move.Id);
 
                 ValidateStorageMove(maybeMove, move.Id);
+                ValidateAgainstStorageMoveOnModify(inputMove: move, storageMove: maybeMove);
 
                 return await this.storageBroker.UpdateMoveAsync(move);
             });
