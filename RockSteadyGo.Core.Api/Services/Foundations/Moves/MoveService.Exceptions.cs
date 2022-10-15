@@ -3,6 +3,7 @@
 // FREE TO USE TO CONNECT THE WORLD
 // ---------------------------------------------------------------
 
+using System;
 using System.Threading.Tasks;
 using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
@@ -59,6 +60,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
 
                 throw CreateAndLogDependencyException(failedMoveStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedMoveServiceException =
+                    new FailedMoveServiceException(exception);
+
+                throw CreateAndLogServiceException(failedMoveServiceException);
+            }
         }
 
         private MoveValidationException CreateAndLogValidationException(Xeption exception)
@@ -96,6 +104,15 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             this.loggingBroker.LogError(moveDependencyException);
 
             return moveDependencyException;
+        }
+
+        private MoveServiceException CreateAndLogServiceException(
+            Xeption exception)
+        {
+            var moveServiceException = new MoveServiceException(exception);
+            this.loggingBroker.LogError(moveServiceException);
+
+            return moveServiceException;
         }
     }
 }
