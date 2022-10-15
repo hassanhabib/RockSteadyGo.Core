@@ -41,6 +41,10 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
 
                 throw CreateAndLogCriticalDependencyException(failedMoveStorageException);
             }
+            catch (NotFoundMoveException notFoundMoveException)
+            {
+                throw CreateAndLogValidationException(notFoundMoveException);
+            }
             catch (DuplicateKeyException duplicateKeyException)
             {
                 var alreadyExistsMoveException =
