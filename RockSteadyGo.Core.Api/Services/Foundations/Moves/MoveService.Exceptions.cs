@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using Microsoft.Data.SqlClient;
 using RockSteadyGo.Core.Api.Models.Moves;
 using RockSteadyGo.Core.Api.Models.Moves.Exceptions;
@@ -36,6 +37,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
 
                 throw CreateAndLogCriticalDependencyException(failedMoveStorageException);
             }
+            catch (DuplicateKeyException duplicateKeyException)
+            {
+                var alreadyExistsMoveException =
+                    new AlreadyExistsMoveException(duplicateKeyException);
+
+                throw CreateAndLogDependencyValidationException(alreadyExistsMoveException);
+            }
         }
 
         private MoveValidationException CreateAndLogValidationException(Xeption exception)
@@ -54,6 +62,16 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             this.loggingBroker.LogCritical(moveDependencyException);
 
             return moveDependencyException;
+        }
+
+        private MoveDependencyValidationException CreateAndLogDependencyValidationException(Xeption exception)
+        {
+            var moveDependencyValidationException =
+                new MoveDependencyValidationException(exception);
+
+            this.loggingBroker.LogError(moveDependencyValidationException);
+
+            return moveDependencyValidationException;
         }
     }
 }
