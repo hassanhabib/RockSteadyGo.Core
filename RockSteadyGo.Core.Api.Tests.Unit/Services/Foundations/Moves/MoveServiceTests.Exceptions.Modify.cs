@@ -28,8 +28,8 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             var expectedMoveDependencyException =
                 new MoveDependencyException(failedMoveStorageException);
 
-            this.dateTimeBrokerMock.Setup(broker =>
-                broker.GetCurrentDateTimeOffset())
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMoveByIdAsync(randomMove.Id))
                     .Throws(sqlException);
 
             // when
@@ -44,13 +44,9 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             actualMoveDependencyException.Should()
                 .BeEquivalentTo(expectedMoveDependencyException);
 
-            this.dateTimeBrokerMock.Verify(broker =>
-                broker.GetCurrentDateTimeOffset(),
-                    Times.Once);
-
             this.storageBrokerMock.Verify(broker =>
                 broker.SelectMoveByIdAsync(randomMove.Id),
-                    Times.Never);
+                    Times.Once);
 
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
@@ -59,6 +55,10 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
 
             this.storageBrokerMock.Verify(broker =>
                 broker.UpdateMoveAsync(randomMove),
+                    Times.Never);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
                     Times.Never);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
