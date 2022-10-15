@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
@@ -60,6 +61,34 @@ namespace RockSteadyGo.Core.Api.Controllers
                     this.moveService.RetrieveAllMoves();
 
                 return Ok(retrievedMoves);
+            }
+            catch (MoveDependencyException moveDependencyException)
+            {
+                return InternalServerError(moveDependencyException);
+            }
+            catch (MoveServiceException moveServiceException)
+            {
+                return InternalServerError(moveServiceException);
+            }
+        }
+
+        [HttpGet("{moveId}")]
+        public async ValueTask<ActionResult<Move>> GetMoveByIdAsync(Guid moveId)
+        {
+            try
+            {
+                Move move = await this.moveService.RetrieveMoveByIdAsync(moveId);
+
+                return Ok(move);
+            }
+            catch (MoveValidationException moveValidationException)
+                when (moveValidationException.InnerException is NotFoundMoveException)
+            {
+                return NotFound(moveValidationException.InnerException);
+            }
+            catch (MoveValidationException moveValidationException)
+            {
+                return BadRequest(moveValidationException.InnerException);
             }
             catch (MoveDependencyException moveDependencyException)
             {
