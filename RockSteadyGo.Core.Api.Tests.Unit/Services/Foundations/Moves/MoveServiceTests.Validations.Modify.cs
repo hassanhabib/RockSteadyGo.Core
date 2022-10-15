@@ -6,6 +6,7 @@
 using System;
 using System.Threading.Tasks;
 using FluentAssertions;
+using Force.DeepCloner;
 using Moq;
 using RockSteadyGo.Core.Api.Models.Moves;
 using RockSteadyGo.Core.Api.Models.Moves.Exceptions;
@@ -172,6 +173,64 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             this.dateTimeBrokerMock.Verify(broker =>
                 broker.GetCurrentDateTimeOffset(),
                     Times.Never);
+
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowValidationExceptionOnModifyIfStorageCreatedDateNotSameAsCreatedDateAndLogItAsync()
+        {
+            // given
+            int randomNumber = GetRandomNegativeNumber();
+            int randomMinutes = randomNumber;
+            DateTimeOffset randomDateTimeOffset = GetRandomDateTimeOffset();
+            Move randomMove = CreateRandomMove(randomDateTimeOffset);
+            Move invalidMove = randomMove.DeepClone();
+            Move storageMove = invalidMove.DeepClone();
+            storageMove.CreatedDate = storageMove.CreatedDate.AddMinutes(randomMinutes);
+            var invalidMoveException = new InvalidMoveException();
+
+            invalidMoveException.AddData(
+                key: nameof(Move.CreatedDate),
+                values: $"Date is not the same as {nameof(Move.CreatedDate)}");
+
+            var expectedMoveValidationException =
+                new MoveValidationException(invalidMoveException);
+
+            this.storageBrokerMock.Setup(broker =>
+                broker.SelectMoveByIdAsync(invalidMove.Id))
+                .ReturnsAsync(storageMove);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                .Returns(randomDateTimeOffset);
+
+            // when
+            ValueTask<Move> modifyMoveTask =
+                this.moveService.ModifyMoveAsync(invalidMove);
+
+            MoveValidationException actualMoveValidationException =
+                await Assert.ThrowsAsync<MoveValidationException>(
+                    modifyMoveTask.AsTask);
+
+            // then
+            actualMoveValidationException.Should()
+                .BeEquivalentTo(expectedMoveValidationException);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.SelectMoveByIdAsync(invalidMove.Id),
+                    Times.Once);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.loggingBrokerMock.Verify(broker =>
+               broker.LogError(It.Is(SameExceptionAs(
+                   expectedMoveValidationException))),
+                       Times.Once);
 
             this.storageBrokerMock.VerifyNoOtherCalls();
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
