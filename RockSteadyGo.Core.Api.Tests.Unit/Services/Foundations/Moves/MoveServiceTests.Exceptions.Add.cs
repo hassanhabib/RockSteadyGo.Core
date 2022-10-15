@@ -4,6 +4,7 @@
 // ---------------------------------------------------------------
 
 using System.Threading.Tasks;
+using EFxceptions.Models.Exceptions;
 using FluentAssertions;
 using Microsoft.Data.SqlClient;
 using Moq;
@@ -55,6 +56,57 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             this.loggingBrokerMock.Verify(broker =>
                 broker.LogCritical(It.Is(SameExceptionAs(
                     expectedMoveDependencyException))),
+                        Times.Once);
+
+            this.dateTimeBrokerMock.VerifyNoOtherCalls();
+            this.storageBrokerMock.VerifyNoOtherCalls();
+            this.loggingBrokerMock.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldThrowDependencyValidationExceptionOnAddIfMoveAlreadyExsitsAndLogItAsync()
+        {
+            // given
+            Move randomMove = CreateRandomMove();
+            Move alreadyExistsMove = randomMove;
+            string randomMessage = GetRandomMessage();
+
+            var duplicateKeyException =
+                new DuplicateKeyException(randomMessage);
+
+            var alreadyExistsMoveException =
+                new AlreadyExistsMoveException(duplicateKeyException);
+
+            var expectedMoveDependencyValidationException =
+                new MoveDependencyValidationException(alreadyExistsMoveException);
+
+            this.dateTimeBrokerMock.Setup(broker =>
+                broker.GetCurrentDateTimeOffset())
+                    .Throws(duplicateKeyException);
+
+            // when
+            ValueTask<Move> addMoveTask =
+                this.moveService.AddMoveAsync(alreadyExistsMove);
+
+            // then
+            MoveDependencyValidationException actualMoveDependencyValidationException =
+                await Assert.ThrowsAsync<MoveDependencyValidationException>(
+                    addMoveTask.AsTask);
+
+            actualMoveDependencyValidationException.Should()
+                .BeEquivalentTo(expectedMoveDependencyValidationException);
+
+            this.dateTimeBrokerMock.Verify(broker =>
+                broker.GetCurrentDateTimeOffset(),
+                    Times.Once);
+
+            this.storageBrokerMock.Verify(broker =>
+                broker.InsertMoveAsync(It.IsAny<Move>()),
+                    Times.Never);
+
+            this.loggingBrokerMock.Verify(broker =>
+                broker.LogError(It.Is(SameExceptionAs(
+                    expectedMoveDependencyValidationException))),
                         Times.Once);
 
             this.dateTimeBrokerMock.VerifyNoOtherCalls();
