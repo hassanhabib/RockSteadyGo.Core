@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using RESTFulSense.Controllers;
@@ -39,6 +40,26 @@ namespace RockSteadyGo.Core.Api.Controllers
                when (moveDependencyValidationException.InnerException is AlreadyExistsMoveException)
             {
                 return Conflict(moveDependencyValidationException.InnerException);
+            }
+            catch (MoveDependencyException moveDependencyException)
+            {
+                return InternalServerError(moveDependencyException);
+            }
+            catch (MoveServiceException moveServiceException)
+            {
+                return InternalServerError(moveServiceException);
+            }
+        }
+
+        [HttpGet]
+        public ActionResult<IQueryable<Move>> GetAllMoves()
+        {
+            try
+            {
+                IQueryable<Move> retrievedMoves =
+                    this.moveService.RetrieveAllMoves();
+
+                return Ok(retrievedMoves);
             }
             catch (MoveDependencyException moveDependencyException)
             {
