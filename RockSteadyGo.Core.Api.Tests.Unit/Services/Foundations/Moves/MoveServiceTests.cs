@@ -5,6 +5,8 @@
 
 using System;
 using System.Linq.Expressions;
+using System.Runtime.Serialization;
+using Microsoft.Data.SqlClient;
 using Moq;
 using RockSteadyGo.Core.Api.Brokers.DateTimes;
 using RockSteadyGo.Core.Api.Brokers.Loggings;
@@ -39,6 +41,9 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
         private static Expression<Func<Xeption, bool>> SameExceptionAs(Xeption expectedException) =>
             actualException => actualException.SameExceptionAs(expectedException);
 
+        private static SqlException GetSqlException() =>
+            (SqlException)FormatterServices.GetUninitializedObject(typeof(SqlException));
+
         public static TheoryData MinutesBeforeOrAfter()
         {
             int randomNumber = GetRandomNumber();
@@ -62,6 +67,9 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
 
         private static int GetRandomPosition() =>
             new IntRange(min: 0, max: 2).GetValue();
+
+        private static Move CreateRandomMove() =>
+            CreateMoveFiller(dateTimeOffset: GetRandomDateTimeOffset()).Create();
 
         private static Move CreateRandomMove(DateTimeOffset dateTimeOffset) =>
             CreateMoveFiller(dateTimeOffset).Create();
