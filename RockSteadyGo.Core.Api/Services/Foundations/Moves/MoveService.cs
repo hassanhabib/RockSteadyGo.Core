@@ -66,5 +66,8 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
 
                 return await this.storageBroker.UpdateMoveAsync(move);
             });
+
+        public ValueTask<Move> RemoveMoveByIdAsync(Guid moveId) =>
+            throw new NotImplementedException();
     }
 }
