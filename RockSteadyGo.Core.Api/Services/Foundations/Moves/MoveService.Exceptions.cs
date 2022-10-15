@@ -83,6 +83,13 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
                     new FailedMoveStorageException(sqlException);
                 throw CreateAndLogCriticalDependencyException(failedMoveStorageException);
             }
+            catch (Exception exception)
+            {
+                var failedMoveServiceException =
+                    new FailedMoveServiceException(exception);
+
+                throw CreateAndLogServiceException(failedMoveServiceException);
+            }
         }
 
         private MoveValidationException CreateAndLogValidationException(Xeption exception)
