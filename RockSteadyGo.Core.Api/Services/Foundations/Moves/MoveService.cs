@@ -27,7 +27,12 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             this.loggingBroker = loggingBroker;
         }
 
-        public async ValueTask<Move> AddMoveAsync(Move move) =>
-            await this.storageBroker.InsertMoveAsync(move);
+        public ValueTask<Move> AddMoveAsync(Move move) =>
+            TryCatch(async () =>
+            {
+                ValidateMoveOnAdd(move);
+
+                return await this.storageBroker.InsertMoveAsync(move);
+            });
     }
 }
