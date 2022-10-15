@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using FluentAssertions;
+using RESTFulSense.Exceptions;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Matches;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Moves;
 using RockSteadyGo.Core.Api.Tests.Acceptance.Models.Players;
@@ -98,6 +99,33 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
             // then
             actualMove.Should().BeEquivalentTo(modifiedMove);
             await this.apiBroker.DeleteMoveByIdAsync(actualMove.Id);
+            await this.apiBroker.DeletePlayerByIdAsync(randomPlayer.Id);
+            await this.apiBroker.DeleteMatchByIdAsync(randomMatch.Id);
+        }
+
+        [Fact]
+        public async Task ShouldDeleteMoveAsync()
+        {
+            // given
+            Match randomMatch = await PostRandomMatchAsync();
+            Player randomPlayer = await PostRandomPlayerAsync();
+            Move randomMove = await PostRandomMoveAsync(randomMatch.Id, randomPlayer.Id);
+            Move inputMove = randomMove;
+            Move expectedMove = inputMove;
+
+            // when
+            Move deletedMove =
+                await this.apiBroker.DeleteMoveByIdAsync(inputMove.Id);
+
+            ValueTask<Move> getMovebyIdTask =
+                this.apiBroker.GetMoveByIdAsync(inputMove.Id);
+
+            // then
+            deletedMove.Should().BeEquivalentTo(expectedMove);
+
+            await Assert.ThrowsAsync<HttpResponseNotFoundException>(() =>
+                getMovebyIdTask.AsTask());
+
             await this.apiBroker.DeletePlayerByIdAsync(randomPlayer.Id);
             await this.apiBroker.DeleteMatchByIdAsync(randomMatch.Id);
         }
