@@ -67,12 +67,15 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
                 return await this.storageBroker.UpdateMoveAsync(move);
             });
 
-        public async ValueTask<Move> RemoveMoveByIdAsync(Guid moveId)
-        {
-            Move maybeMove = await this.storageBroker
-                .SelectMoveByIdAsync(moveId);
+        public ValueTask<Move> RemoveMoveByIdAsync(Guid moveId) =>
+            TryCatch(async () =>
+            {
+                ValidateMoveId(moveId);
 
-            return await this.storageBroker.DeleteMoveAsync(maybeMove);
-        }
+                Move maybeMove = await this.storageBroker
+                    .SelectMoveByIdAsync(moveId);
+
+                return await this.storageBroker.DeleteMoveAsync(maybeMove);
+            });
     }
 }
