@@ -48,11 +48,15 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             this.storageBrokerMock.VerifyNoOtherCalls();
         }
 
-        [Fact]
-        public async Task ShouldThrowValidationExceptionOnAddIfMoveIsInvalidAndLogItAsync()
+        [Theory]
+        [InlineData(-1)]
+        [InlineData(3)]
+        public async Task ShouldThrowValidationExceptionOnAddIfMoveIsInvalidAndLogItAsync(int invalidLocation)
         {
             // given
             var invalidMove = new Move();
+            invalidMove.LocationX = invalidLocation;
+            invalidMove.LocationY = invalidLocation;
 
             var invalidMoveException =
                 new InvalidMoveException();
@@ -71,15 +75,11 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
 
             invalidMoveException.AddData(
                 key: nameof(Move.LocationX),
-                values: "Value is required");
+                values: "Invalid value");
 
             invalidMoveException.AddData(
                 key: nameof(Move.LocationY),
-                values: "Value is required");
-
-            invalidMoveException.AddData(
-                key: nameof(Move.Type),
-                values: "Value is required");
+                values: "Invalid value");
 
             invalidMoveException.AddData(
                 key: nameof(Move.CreatedDate),

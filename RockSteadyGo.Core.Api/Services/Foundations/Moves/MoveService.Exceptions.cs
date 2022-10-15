@@ -24,6 +24,10 @@ namespace RockSteadyGo.Core.Api.Services.Foundations.Moves
             {
                 throw CreateAndLogValidationException(nullMoveException);
             }
+            catch (InvalidMoveException invalidMoveException)
+            {
+                throw CreateAndLogValidationException(invalidMoveException);
+            }
         }
 
         private MoveValidationException CreateAndLogValidationException(Xeption exception)

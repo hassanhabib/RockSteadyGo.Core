@@ -41,6 +41,9 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
         private static DateTimeOffset GetRandomDateTimeOffset() =>
             new DateTimeRange(earliestDate: new DateTime()).GetValue();
 
+        private static int GetRandomPosition() =>
+            new IntRange(min: 0, max: 2).GetValue();
+
         private static Move CreateRandomMove(DateTimeOffset dateTimeOffset) =>
             CreateMoveFiller(dateTimeOffset).Create();
 
@@ -50,6 +53,8 @@ namespace RockSteadyGo.Core.Api.Tests.Unit.Services.Foundations.Moves
             var filler = new Filler<Move>();
 
             filler.Setup()
+                .OnProperty(move => move.LocationX).Use(GetRandomPosition())
+                .OnProperty(move => move.LocationY).Use(GetRandomPosition())
                 .OnType<DateTimeOffset>().Use(dateTimeOffset)
                 .OnProperty(move => move.Match).IgnoreIt()
                 .OnProperty(move => move.Player).IgnoreIt();
