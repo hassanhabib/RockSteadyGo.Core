@@ -23,6 +23,9 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
         public MovesApiTests(ApiBroker apiBroker) =>
             this.apiBroker = apiBroker;
 
+        private static DateTimeOffset GetRandomDateTime() =>
+            new DateTimeRange(earliestDate: new DateTime()).GetValue();
+
         private static int GetRandomPosition() =>
             new IntRange(min: 0, max: 2).GetValue();
 
@@ -72,6 +75,15 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Moves
                 .OnProperty(player => player.CreatedDate).Use(now);
 
             return filler;
+        }
+
+        private static Move UpdateMoveWithRandomValues(Move inputMove)
+        {
+            Move randomUpdatedMove = CreateRandomMove(inputMove.MatchId, inputMove.PlayerId);
+            randomUpdatedMove.Id = inputMove.Id;
+            randomUpdatedMove.CreatedDate = inputMove.CreatedDate;
+
+            return randomUpdatedMove;
         }
 
         private static Move CreateRandomMove(Guid matchId, Guid playerId) =>

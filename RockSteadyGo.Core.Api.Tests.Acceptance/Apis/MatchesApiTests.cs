@@ -29,15 +29,11 @@ namespace RockSteadyGo.Core.Api.Tests.Acceptance.Apis.Matches
 
         private static Match UpdateMatchWithRandomValues(Match inputMatch)
         {
-            DateTimeOffset now = DateTimeOffset.UtcNow;
-            var filler = new Filler<Match>();
+            Match randomUpdatedMatch = CreateRandomMatch();
+            randomUpdatedMatch.Id = inputMatch.Id;
+            randomUpdatedMatch.CreatedDate = inputMatch.CreatedDate;
 
-            filler.Setup()
-                .OnProperty(match => match.Id).Use(inputMatch.Id)
-                .OnType<DateTimeOffset>().Use(GetRandomDateTime())
-                .OnProperty(match => match.CreatedDate).Use(inputMatch.CreatedDate);
-
-            return filler.Create();
+            return randomUpdatedMatch;
         }
 
         private async ValueTask<Match> PostRandomMatchAsync()
